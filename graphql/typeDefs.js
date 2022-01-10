@@ -25,11 +25,25 @@ module.exports = gql`
     confirmPassword: String!
     email: String!
   }
+  input CountryInput {
+    name: String!
+    cases: Int!
+    todayCases: Int!
+    todayDeaths: Int!
+    deaths: Int!
+    population: Int!
+    continent: String!
+    active: Int!
+  }
   type Query { 
     getUsers: [User]
+    getCountry(countryID: ID!): Country!
+    getCountries: [Country]
   }
   type Mutation {
     register(registerInput: RegisterInput): User!
     login(username: String!, password: String!): User!
+    addCountry(country: CountryInput!): Country!
+    deleteCountry(countryID: ID!): String!
   }
 `;

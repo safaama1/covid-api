@@ -1,0 +1,38 @@
+.header-tag-line {
+    font-size: larger;
+    color: rgb(133, 130, 130);
+}
+
+.title-intro {
+    font-weight: 800;
+
+}
+
+.cases-header {
+    font-size: x-large;
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-weight: 300;
+    color: rgb(133, 130, 130);
+}
+
+.total-cases {
+    font-size: xx-large;
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    color: black;
+}
+
+.total-deaths {
+    font-size: xx-large;
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    color: red;
+}
+
+.total-recovered{
+    font-size: xx-large;
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    color: green;
+}
