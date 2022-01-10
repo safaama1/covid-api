@@ -1,38 +1,51 @@
 .header-tag-line {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
     font-size: larger;
-    color: rgb(133, 130, 130);
+    color: rgb(143, 140, 140);
 }
 
 .title-intro {
-    font-weight: 800;
+    font-family: sans-serif;
+    font-weight: 900;
 
 }
 
 .cases-header {
-    font-size: x-large;
+    font-size: x-large; 
     font-family: 'Quicksand', sans-serif;
     text-align: center;
-    font-weight: 300;
-    color: rgb(133, 130, 130);
+    font-weight: 600;
+    color: rgb(87, 85, 85);
 }
 
 .total-cases {
     font-size: xx-large;
     text-align: center;
+    font-weight: 800;
     font-family: 'Quicksand', sans-serif;
-    color: black;
+    color: rgb(78, 78, 78);
 }
 
 .total-deaths {
     font-size: xx-large;
+    font-weight: 800;
     text-align: center;
     font-family: 'Quicksand', sans-serif;
     color: red;
 }
 
-.total-recovered{
+.total-recovered {
     font-size: xx-large;
+    font-weight: 800;
     text-align: center;
     font-family: 'Quicksand', sans-serif;
-    color: green;
+    color: #32CD32;
+}
+
+.video-title {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: xx-large;
+    font-weight: 900;
 }
