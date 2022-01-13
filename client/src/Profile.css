@@ -1,0 +1,31 @@
+.welcome-message {
+    font-family: 'Indie Flower', cursive;
+    text-align: center;
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.content-header {
+    font-family: 'Nunito', sans-serif;
+    text-align: center;
+    font-size: 60px;
+    font-weight: 800;
+    color: #21ABAB;
+}
+
+.content {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: rgb(114, 113, 113);
+}
+
+
+.map-title {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 120px;
+}
