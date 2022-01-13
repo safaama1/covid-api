@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { Row, Col, Container, Button, Image, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationTriangle, Start } from '@fortawesome/free-solid-svg-icons'
@@ -6,11 +6,16 @@ import Carousel from 'react-bootstrap/Carousel'
 import YoutubeEmbed from "../components/YoutubeEmbed";
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import Grow from '@mui/material/Grow';
+import { AuthContext } from '../context/auth';
+import { makeStyles } from '@material-ui/core/styles';
+import StartIcon from '@mui/icons-material/Start';
+import Profile from './Profile';
 import '../Home.css';
 
 
 
 const Home = () => {
+    const { user } = useContext(AuthContext)
     const [cases, setCases] = useState([])
     const [todayDeaths, setTodayDeaths] = useState([])
     const [todayCases, setTodayCases] = useState([])
@@ -18,30 +23,46 @@ const Home = () => {
     const [loading, setLoading] = useState(true)
     const [slidePage, setSlidePage] = useState(false);
 
+    const useStyles = makeStyles({
+        flexGrow: {
+            flex: '1',
+        },
+        button: {
+            backgroundColor: '#21ABAB',
+            color: '#fff',
+            '&:hover': {
+                backgroundColor: '#fff',
+                color: '#21ABAB',
+            },
+        }
+    })
+
     const delay = ms => new Promise(res => setTimeout(res, ms));
+
     const getData = async () => {
         setSlidePage(true);
         await delay(1000);
         setLoading(true)
-        const response = await fetch('https://corona.lmao.ninja/v2/continents?yesterday=true&sort')
+        const response = await fetch('https://disease.sh/v3/covid-19/all?yesterday=yesterday')
         const arr = await response.json()
         console.log(arr)
-        setTodayDeaths(arr.map(continent => continent.todayDeaths).reduce((acc, continent) => continent + acc));
-        setTodayCases(arr.map(continent => continent.todayCases).reduce((acc, continent) => continent + acc));
-        setRecovered(arr.map(continent => continent.recovered).reduce((acc, continent) => continent + acc));
-        setCases(arr.map(continent => continent.active).reduce((acc, continent) => continent + acc));
+        setTodayDeaths(arr.todayDeaths);
+        setTodayCases(arr.todayCases);
+        setRecovered(arr.recovered);
+        setCases(arr.cases);
         setLoading(false)
     }
+
+    const classes = useStyles()
 
     useEffect(() => {
         getData()
     }, [])
-    return (
+    const homePage = user ? <Profile /> : (
         <Grow
             in={slidePage}
             style={{ transformOrigin: '0 0 0' }}
-            {...(slidePage ? { timeout: 1000 } : {})}
-        >
+            {...(slidePage ? { timeout: 1000 } : {})}   >
             <Container className='mt-5'>
                 <Row className='mt-5 mb-5'>
                     <div className="col-md-6 mt-4 intro-info order-md-first order-last justify-content-center align-self-center ">
@@ -51,11 +72,16 @@ const Home = () => {
                         <h1 className='title-intro'>
                             Together we fight <br /> COVID-19
                         </h1>
-                        <div className="header-tag-line mt-5">
+                        <div className="header-tag-line mt-5 mb-3">
                             According to the World Health Organisation [WHO] this pandemic coronavirus can be defined as “The COVID-19 is an infectious disease caused by a newly discovered coronavirus”.
-                            <br /> COVID-19 Data Web API provides open access to the collected data on the COVID-19 confirmed cases and deaths in any country or town in the world  .
+                            <br /> COVID-19 Data Web API provides open access to the collected data on the COVID-19 confirmed cases and deaths in any Continent or Country in the world  .
                         </div>
-                        <Button href='/login' variant="outline-success mt-2" size='lg'>Get Started</Button>
+                        {/* <Button href='/login' variant="outline-success mt-2" size='lg'>Get Started</Button> */}
+                        <Button className={classes.button} href='/register'
+                            color='success' variant="contained"
+                            endIcon={<YouTubeIcon />} size="large">
+                            Get Started
+                        </Button>
 
                     </div>
                     <div className="col-md-6 mt-4 mb-5 intro-info justify-content-center align-self-center ">
@@ -65,7 +91,7 @@ const Home = () => {
                 <Row className='shadow mt-5 mb-5 '>
                     <Col className='mt-4 justify-content-center align-self-center' xs={6} md={3}>
                         <h2 className='cases-header'>
-                            Active Cases <br />
+                            Total Cases <br />
                         </h2>
                         <div className='total-deaths mb-3'>
                             {loading ? <Spinner animation="border" variant="danger" />
@@ -108,19 +134,32 @@ const Home = () => {
                 <Row>
                     <Col className='mt-5 text-center' xs={12} md={12}>
                         <h1 className='video-title'>
-                        <YouTubeIcon style={{ fontSize: 50 , color:'red' }}  /> The Coronavirus Explained & What You Should Do 
+                            <YouTubeIcon style={{ fontSize: 50, color: 'red' }} /> The Coronavirus Explained & What You Should Do
                         </h1>
                     </Col>
                 </Row>
                 <Row className='mt-5 mb-5 justify-content-center align-self-center'>
                     <Col xs={12} md={12}>
-                        <YoutubeEmbed />
+                        <YoutubeEmbed embedId="BtN-goy9VOY" />
                     </Col>
 
                 </Row>
+                <Row>
+                    <Col className='mt-5 text-center' xs={12} md={12}>
+                        <h1 className='video-title'>
+                            <YouTubeIcon style={{ fontSize: 50, color: 'red' }} /> What is an API?
+                        </h1>
+                    </Col>
+                </Row>
+                <Row className='mt-5 mb-5 justify-content-center align-self-center'>
+                    <Col xs={12} md={12}>
+                        <YoutubeEmbed embedId="s7wmiS2mSXY" />
+                    </Col>
 
+                </Row>
             </Container>
         </Grow>
     )
+    return homePage;
 }
 export default Home;

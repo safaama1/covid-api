@@ -1,0 +1,68 @@
+.info-card {
+    border-radius: 50px;
+}
+
+.country-info {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.continent-name {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: xx-large;
+    color: #21ABAB;
+    font-weight: bold;
+}
+
+.population {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: xx-large;
+    color: #21ABAB;
+    font-weight: bold;
+
+}
+
+.total-header {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.total-title {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: #21ABAB;
+}
+
+.not-found-title {
+    font-family: 'Lobster', cursive;
+    text-align: center;
+    font-size: 120px;
+    font-weight: bold;
+    background: -webkit-linear-gradient(red, #21ABAB, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.not-found-sub-title {
+    font-family: 'Dancing Script', cursive;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: rgb(78, 78, 78);
+}
+
+.not-found-info {
+    font-family: 'Quicksand', sans-serif;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+    color: black;
+}

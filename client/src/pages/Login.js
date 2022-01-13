@@ -1,14 +1,47 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState, useContext } from 'react'
 import { Container, Row, Col, Image } from 'react-bootstrap';
+import { useMutation } from '@apollo/react-hooks'
+import { useNavigate } from 'react-router-dom';
+import gql from 'graphql-tag';
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import LoginIcon from '@mui/icons-material/Login';
 import Button from '@mui/material/Button';
-import '../Register.css';
 import Slide from '@mui/material/Slide';
+import { AuthContext } from '../context/auth';
+
+import '../Register.css';
 
 function Login() {
+    const context = useContext(AuthContext)
+    const navigate = useNavigate();
     const [slidePage, setSlidePage] = useState(false)
+    const [errors, setErrors] = useState({})
+    const [values, setValues] = useState({
+        username: '',
+        password: ''
+    })
+
+    const onChange = (event) => {
+        setValues({ ...values, [event.target.name]: event.target.value })
+    }
+    const [loginUser, { loading }] = useMutation(LOGIN_USER, {
+        update(_, result) {
+            console.log(result.data.login)
+            context.login(result.data.login)
+            navigate('/')
+        },
+        onError(err) {
+            setErrors(err.graphQLErrors[0].extensions.errors)
+        }
+        , variables: values
+    });
+    const onSubmit = (event) => {
+        event.preventDefault()
+        loginUser()
+    }
     useEffect(() => {
         setSlidePage(true)
     }, [])
@@ -20,26 +53,46 @@ function Login() {
                 <br />
                 <Row className='shadow-lg p-3 mb-5 bg-white'>
                     <Col className="mt-3" md={5} xs={12}>
-                        <form>
+                        <form onSubmit={onSubmit} noValidate>
                             <h3 className='text-center mb-4'>Log In</h3>
                             <div className="form-group mt-3">
-                                <TextField required id="outlined-basic" label="Username" variant="outlined" fullWidth />
+                                <TextField
+                                    required
+                                    id="outlined-basic"
+                                    name='username'
+                                    label="Username"
+                                    variant="outlined"
+                                    onChange={onChange}
+                                    error={errors.username ? true : false}
+                                    helperText={errors.username ? "Incorrect Username." : ""}
+                                    fullWidth />
                             </div>
                             <div className="form-group">
                                 <TextField
                                     required
                                     id="outlined-password-input"
+                                    name='password'
                                     label="Password"
                                     type="password"
                                     autoComplete="current-password"
+                                    onChange={onChange}
+                                    error={errors.password ? true : false}
+                                    helperText={errors.password ? "Incorrect Password." : ""}
                                     fullWidth
                                 />
                             </div>
-                            <Button color="inherit" variant="contained" size="medium" fullWidth>Log In&nbsp;&nbsp;<LoginIcon /></Button>
+                            <Button type='submit' color="inherit" variant="contained" size="medium" fullWidth>Log In&nbsp;&nbsp;<LoginIcon /></Button>
                             <p className="forgot-password text-right mt-2">
                                 Not a member? <a href="/register">sign up</a>
                             </p>
                         </form>
+                        {Object.keys(errors).length > 0 && (
+                            <Stack sx={{ width: '100%' }} spacing={2}>
+                                {Object.values(errors).map(value => (
+                                    <Alert severity="error" key={value}>{value}</Alert>
+                                ))}
+                            </Stack>
+                        )}
                     </Col>
                     <Col md={7} xs={12} className='mt-3'>
                         <Image className="img-fluid px-lg-1 px-md-0 px-sm-4 px-5" src={process.env.PUBLIC_URL + '/images/undraw_login_re_4vu2.svg'} />
@@ -50,4 +103,17 @@ function Login() {
     );
 
 }
+const LOGIN_USER = gql`
+    mutation login(
+        $username: String!
+        $password: String!
+    ) {
+        login(
+            username: $username
+            password: $password
+        ){
+            id email username createdAt token
+        }
+    }
+`
 export default Login;
