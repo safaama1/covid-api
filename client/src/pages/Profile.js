@@ -67,7 +67,7 @@ function Profile(props) {
                             </Zoom>
                             &nbsp;&nbsp;
                             <Zoom in={zoom}>
-                                <Button className={classes.button} color='success' variant="contained" endIcon={<PublicIcon />} size="large">
+                                <Button className={classes.button} color='success' variant="contained" href="/continent" endIcon={<PublicIcon />} size="large">
                                     Continente
                                 </Button>
                             </Zoom>

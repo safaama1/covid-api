@@ -2,7 +2,6 @@ import React, { useState, useMemo, useContext, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import countryList from 'react-select-country-list'
 import { AuthContext } from '../context/auth';
 import Home from './Home';
 import '../Profile.css'
@@ -11,15 +10,16 @@ import '../Home.css'
 import FormGroup from '@mui/material/FormGroup';
 import { makeStyles } from "@material-ui/core";
 import { set } from 'mongoose';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-import Image from 'react-bootstrap/Image'
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Zoom from '@mui/material/Zoom';
 import Button from '@mui/material/Button';
 import Grow from '@mui/material/Grow';
 import AddIcon from '@mui/icons-material/Add';
+import ContinentMap from "../components/ContinentMap";
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -42,38 +42,49 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-/* this commponent is used to update the country map every time 
- the user changes the selected country  */
-function ChangeMapView({ coords }) {
-    const map = useMap();
-    map.setView(coords, map.getZoom());
 
-    return null;
-}
-
-function Country(props) {
+function Continent(props) {
 
     const { user } = useContext(AuthContext)
-    const options = useMemo(() => countryList().getData(), [])
+    const options = ['Asia', 'Africa', 'Europe', 'North America', 'South America', 'Australia']
     const [zoom, setZoom] = useState(false)
     const classes = useStyles();
-    const [currCountry, setCurrCountry] = useState(null)
+    const [currContinent, setCurrContinent] = useState(null)
     const [value, setValue] = useState('');
     const [inputValue, setInputValue] = useState('');
-    const [loading, setLoading] = useState(false)
     const [slidePage, setSlidePage] = useState(false)
     const [error, setError] = useState(false)
-
-    async function getData(country) {
-        setLoading(true);
+    const [continentName, setContinent] = useState('')
+    const [allCountries, setAllCountries] = useState(null)
+    async function getData(continent) {
         try {
-            const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=yesterday`)
+            const response = await fetch(`https://disease.sh/v3/covid-19/continents/${continent}?yesterday=yesterday&strict=true`)
             if (response.ok) {
                 setError(false)
-                const country_obj = await response.json()
-                setCurrCountry(country_obj)
-                console.log(country_obj)
-
+                const continent_obj = await response.json()
+                setCurrContinent(continent_obj)
+                switch (continent_obj.continent) {
+                    case 'North America':
+                        setContinent('na');
+                        break;
+                    case 'Asia':
+                        setContinent('as');
+                        break;
+                    case 'South America':
+                        setContinent('sa');
+                        break;
+                    case 'Europe':
+                        setContinent('eu');
+                        break;
+                    case 'Africa':
+                        setContinent('af');
+                        break;
+                    case 'Australia-Oceania':
+                        setContinent('oc');
+                        break;
+                    default:
+                        return '';
+                }
             } else {
                 setError(true)
                 console.log("NO Info about the page")
@@ -81,13 +92,15 @@ function Country(props) {
         } catch (error) {
 
         }
-        setLoading(false);
         setSlidePage(true);
     }
-
-
+    async function getCountries() {
+        const response2 = await fetch('https://disease.sh/v3/covid-19/countries')
+        const countries_obj = await response2.json()
+        setAllCountries(countries_obj)
+    }
     useEffect(() => {
-        // setSlidePage(true)
+        getCountries()
         setZoom(true)
     }, [])
 
@@ -97,24 +110,23 @@ function Country(props) {
             <Row className='mt-5' >
                 <Col className='mt-5'>
                     <h2 className='content mt-5'>
-                        Select country:
+                        Select continent:
                     </h2>
                     <div className='mt-4'>
                         <FormGroup className={classes.formGroup} noValidate autoComplete="on">
                             <Autocomplete
                                 disablePortal
                                 value={value}
-                                isOptionEqualToValue={(option, value) => option.id === value.id}
                                 onChange={async (event, newValue) => {
-                                    console.log(newValue)
                                     setSlidePage(false)
-                                    setValue(newValue.label)
+                                    setValue(newValue)
                                     try {
-                                        await getData(newValue.label.toLowerCase());
+                                        await getData(newValue.toLowerCase());
                                     } catch (err) {
 
                                     }
                                 }}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
                                 inputValue={inputValue}
                                 onInputChange={(event, newInputValue) => {
                                     setInputValue(newInputValue);
@@ -122,7 +134,7 @@ function Country(props) {
                                 id="combo-box-demo"
                                 options={options}
                                 sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Country" />}
+                                renderInput={(params) => <TextField {...params} label="Continent" />}
                             />
                         </FormGroup>
                     </div>
@@ -133,21 +145,24 @@ function Country(props) {
 
                 </Col>
             </Row>
-            {currCountry && error === false ? (
+            {currContinent && error === false ? (
 
                 <Container>
                     <Grow
                         in={slidePage}
                         style={{ transformOrigin: '0 0 0' }}
                         {...(slidePage ? { timeout: 2000 } : {})}   >
+                        <Row className='mt-5 mb-5'>
+                            <ContinentMap continent={continentName} />
+                        </Row>
+                    </Grow>
+                    <Grow
+                        in={slidePage}
+                        style={{ transformOrigin: '0 0 0' }}
+                        {...(slidePage ? { timeout: 2000 } : {})}   >
                         <Row className='info-card shadow mt-5 mb-5 '>
-                            {/* country card  */}
-                            <Col className='mt-5 mb-5' xs={12} md={3}>
-                                <Image className='shadow ms-4'
-                                    src={currCountry.countryInfo.flag}
-                                    fluid roundedCircle />
-                            </Col>
-                            <Col className=' mt-5 mb-5 ' xs={12} md={3}>
+                            {/* continent card  */}
+                            <Col className=' mt-5 mb-5 ' xs={12} md={4}>
                                 <div>
                                     <h2 className='country-info mt-4'>
                                         Name
@@ -155,26 +170,27 @@ function Country(props) {
                                     </h2>
                                     <h4 className='continent-name mt-4'>
 
-                                        {currCountry.country}
+                                        {currContinent.continent}
                                     </h4>
                                 </div>
                             </Col>
-                            <Col className=' mt-5 mb-5 ' xs={12} md={3}>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={4}>
                                 <h2 className='country-info mt-4'>
                                     Population
                                     <br />
                                 </h2>
                                 <h4 className="population mt-4">
-                                    {currCountry.population}
+                                    {currContinent.population}
                                 </h4>
                             </Col>
-                            <Col className=' mt-5 mb-5 ' xs={12} md={3}>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={4}>
                                 <h2 className='country-info mt-4'>
-                                    Continent
+                                    Active Cases
                                     <br />
                                 </h2>
-                                <h4 className="population mt-4">
-                                    {currCountry.continent}
+                                <h4 className='total-deaths mt-4'>
+
+                                    {currContinent.active}
                                 </h4>
                             </Col>
                         </Row>
@@ -197,7 +213,7 @@ function Country(props) {
                                     </h2>
                                     <h4 className='total-deaths mt-4'>
 
-                                        {currCountry.cases}
+                                        {currContinent.cases}
                                     </h4>
                                 </div>
                             </Col>
@@ -207,7 +223,7 @@ function Country(props) {
                                     <br />
                                 </h2>
                                 <h4 className="total-recovered mt-4">
-                                    {currCountry.recovered}
+                                    {currContinent.recovered}
                                 </h4>
                             </Col>
                             <Col className=' mt-5 mb-5 ' xs={12} md={3}>
@@ -216,7 +232,7 @@ function Country(props) {
                                     <br />
                                 </h2>
                                 <h4 className="total-deaths mt-4">
-                                    {currCountry.deaths}
+                                    {currContinent.deaths}
                                 </h4>
                             </Col>
                         </Row>
@@ -236,7 +252,7 @@ function Country(props) {
                                 </h2>
                                 <h4 className='total-deaths mt-4'>
 
-                                    {currCountry.todayCases}
+                                    {currContinent.todayCases}
                                 </h4>
                             </div>
                         </Col>
@@ -246,7 +262,7 @@ function Country(props) {
                                 <br />
                             </h2>
                             <h4 className="total-recovered mt-4">
-                                {currCountry.todayRecovered}
+                                {currContinent.todayRecovered}
                             </h4>
                         </Col>
                         <Col className=' mt-5 mb-5 ' xs={12} md={3}>
@@ -255,15 +271,13 @@ function Country(props) {
                                 <br />
                             </h2>
                             <h4 className="total-deaths mt-4">
-                                {currCountry.todayDeaths}
+                                {currContinent.todayDeaths}
                             </h4>
                         </Col>
                     </Row>
 
                     <Row>
                         <Col className='mt-5 mb-5' xs={12} md={6}>
-                            {/* <div>{`value: ${value !== null ? `'${value}'` : 'null'}`}</div>
-                            <div>{`inputValue: '${inputValue}'`}</div> */}
                             <h1 className='total-header mb-3 '>
                                 Today Stats
                             </h1>
@@ -273,7 +287,7 @@ function Country(props) {
                                     datasets: [
                                         {
                                             label: 'Today Cases',
-                                            data: [currCountry.todayCases, currCountry.todayRecovered, currCountry.todayDeaths],
+                                            data: [currContinent.todayCases, currContinent.todayRecovered, currContinent.todayDeaths],
                                             backgroundColor: [
                                                 'rgb(255, 205, 86)',
                                                 'rgb(54, 162, 235)',
@@ -300,7 +314,7 @@ function Country(props) {
                                     datasets: [
                                         {
                                             label: 'Total Cases',
-                                            data: [currCountry.cases, currCountry.recovered, currCountry.deaths],
+                                            data: [currContinent.cases, currContinent.recovered, currContinent.deaths],
                                             backgroundColor: [
                                                 'rgb(255, 205, 86)',
                                                 'rgb(54, 162, 235)',
@@ -318,29 +332,34 @@ function Country(props) {
                             </div>
                         </Col>
                     </Row>
-                    <Row className='info-card shadow mt-5'>
-                        <Col>
-                            <h1 className='total-header mt-5 mb-5'>
-                                {currCountry.country}'s Location <LocationOnIcon style={{ marginTop: -12, fontSize: 45, color: "#21ABAB" }} />
-                            </h1>
-                            <MapContainer
-                                center={[currCountry.countryInfo.lat, currCountry.countryInfo.long]}
-                                zoom={6}
-                                style={{ height: '80vh', width: '80wh' }}
-                                scrollWheelZoom={false}>
-                                <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                />
-                                <Marker position={[currCountry.countryInfo.lat, currCountry.countryInfo.long]}>
-                                    <Popup>
-                                        {currCountry.country}
-                                    </Popup>
-                                </Marker>
-                                <ChangeMapView coords={[currCountry.countryInfo.lat, currCountry.countryInfo.long]} />
-                            </MapContainer>
-                        </Col>
+                    <Row className='mt-5 mb-3'>
+                        <h1 className='total-header mb-3'>
+                            Countries :
+                        </h1>
                     </Row>
+                    <Row className='mt-5 justify-content-center align-self-center'>
+                        <ImageList sx={{ width: 500, height: 450 }} className='info-card shadow'>
+                            {
+                                allCountries.filter((country) => {
+                                    return country.continent === currContinent.continent
+                                }).map((country) => {
+                                    return (
+                                        <ImageListItem key={country.country}>
+                                            <img
+                                                src={country.countryInfo.flag}
+                                                alt={country.country}
+                                                loading="lazy"
+                                            />
+                                            <ImageListItemBar
+                                                title={country.country}
+                                            />
+                                        </ImageListItem>
+                                    )
+                                })
+                            }
+                        </ImageList>
+                    </Row>
+
                     <Row className='mt-5 content'>
                         <Zoom in={zoom}>
                             <div className='mb-5'>
@@ -350,7 +369,7 @@ function Country(props) {
                                     variant="contained"
                                     size="large"
                                     endIcon={<AddIcon />}>
-                                    Add Country
+                                    Add Continent
                                 </Button>
                             </div>
                         </Zoom>
@@ -382,4 +401,4 @@ function Country(props) {
 }
 
 
-export default Country;
+export default Continent;
