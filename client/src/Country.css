@@ -66,3 +66,9 @@
     font-weight: bold;
     color: black;
 }
+
+.country-list{
+    text-align: center;
+    place-items: center;
+
+}

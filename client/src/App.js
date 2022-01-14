@@ -13,11 +13,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import { AuthProvider } from './context/auth'
 import AuthRoute from './util/AuthRoute'
+import Country from './pages/Country';
+import Continent from './pages/Continent';
 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap-css-only/css/bootstrap.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Country from './pages/Country';
 
 function App() {
   return (
@@ -40,6 +41,10 @@ function App() {
             </Route>
             <Route exact path="/country" element={
               <Country />
+            }>
+            </Route>
+            <Route exact path="/continent" element={
+              <Continent />
             }>
             </Route>
           </Routes>

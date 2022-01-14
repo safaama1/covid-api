@@ -76,11 +76,12 @@ const Home = () => {
                             According to the World Health Organisation [WHO] this pandemic coronavirus can be defined as “The COVID-19 is an infectious disease caused by a newly discovered coronavirus”.
                             <br /> COVID-19 Data Web API provides open access to the collected data on the COVID-19 confirmed cases and deaths in any Continent or Country in the world  .
                         </div>
-                        {/* <Button href='/login' variant="outline-success mt-2" size='lg'>Get Started</Button> */}
-                        <Button className={classes.button} href='/register'
-                            color='success' variant="contained"
-                            endIcon={<YouTubeIcon />} size="large">
-                            Get Started
+                        <Button className={classes.button}
+                            href='/register'
+                            color='success'
+                            variant="contained"
+                            size="large">
+                            Get Started <StartIcon />
                         </Button>
 
                     </div>

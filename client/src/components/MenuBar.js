@@ -80,7 +80,7 @@ const MenuBar = () => {
                     <Nav>
                     </Nav>
                     <Nav>
-                        <Nav.Link>
+                        <Nav.Link href='/'>
                             <Avatar sx={{ bgcolor: '#21ABAB' }} >
                                 {user.username[0]}
                             </Avatar>
