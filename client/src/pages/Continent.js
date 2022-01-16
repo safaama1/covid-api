@@ -4,9 +4,6 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { AuthContext } from '../context/auth';
 import Home from './Home';
-import '../Profile.css'
-import '../Country.css'
-import '../Home.css'
 import FormGroup from '@mui/material/FormGroup';
 import { makeStyles } from "@material-ui/core";
 import { set } from 'mongoose';
@@ -20,6 +17,9 @@ import ContinentMap from "../components/ContinentMap";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
+import '../css/Profile.css'
+import '../css/Country.css'
+import '../css/Home.css'
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 

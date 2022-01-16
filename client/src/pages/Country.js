@@ -4,13 +4,12 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import countryList from 'react-select-country-list'
 import { AuthContext } from '../context/auth';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag'
+import { useNavigate } from 'react-router-dom';
 import Home from './Home';
-import '../Profile.css'
-import '../Country.css'
-import '../Home.css'
 import FormGroup from '@mui/material/FormGroup';
 import { makeStyles } from "@material-ui/core";
-import { set } from 'mongoose';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
@@ -20,6 +19,11 @@ import Zoom from '@mui/material/Zoom';
 import Button from '@mui/material/Button';
 import Grow from '@mui/material/Grow';
 import AddIcon from '@mui/icons-material/Add';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import '../css/Profile.css'
+import '../css/Country.css'
+import '../css/Home.css'
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -63,9 +67,38 @@ function Country(props) {
     const [loading, setLoading] = useState(false)
     const [slidePage, setSlidePage] = useState(false)
     const [error, setError] = useState(false)
+    const [successful, setSuccessful] = useState(false)
+    const [values, setValues] = useState({
+        name: '',
+        cases: 0,
+        todayCases: 0,
+        todayDeaths: 0,
+        deaths: 0,
+        population: 0,
+        continent: '',
+        active: 0
+    })
+    const navigate = useNavigate();
+
+    const [addCountry, { errors }] = useMutation(CREATE_COUNTRY_MUTATION, {
+        variables: values,
+        update(_, result) {
+            console.log(result)
+            setSuccessful(true)
+            setOpen(true);
+            // navigate('/')
+        },
+        onError(err) {
+            console.log(err.graphQLErrors[0].extensions.errors)
+            setCantOpen(true)
+        }
+    })
 
     async function getData(country) {
+        setCantOpen(false)
+        setOpen(false)
         setLoading(true);
+        setSuccessful(false)
         try {
             const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=yesterday`)
             if (response.ok) {
@@ -73,6 +106,16 @@ function Country(props) {
                 const country_obj = await response.json()
                 setCurrCountry(country_obj)
                 console.log(country_obj)
+                setValues({
+                    name: country_obj.country,
+                    cases: country_obj.cases,
+                    todayCases: country_obj.todayCases,
+                    todayDeaths: country_obj.todayDeaths,
+                    deaths: country_obj.deaths,
+                    population: country_obj.population,
+                    continent: country_obj.continent,
+                    active: country_obj.active
+                })
 
             } else {
                 setError(true)
@@ -85,9 +128,27 @@ function Country(props) {
         setSlidePage(true);
     }
 
+    const onClick = (event) => {
+        event.preventDefault()
+        addCountry()
+    }
+
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const [open, setOpen] = useState(false);
+    const [cantOpen, setCantOpen] = useState(false);
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+        setCantOpen(false);
+    };
 
     useEffect(() => {
-        // setSlidePage(true)
         setZoom(true)
     }, [])
 
@@ -349,9 +410,22 @@ function Country(props) {
                                     color='success'
                                     variant="contained"
                                     size="large"
-                                    endIcon={<AddIcon />}>
+                                    endIcon={<AddIcon />}
+                                    onClick={onClick}>
                                     Add Country
                                 </Button>
+                                <div className='content mt-3'>
+                                    {successful ? (<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                                            The Country {currCountry.country} has been added successfully !
+                                        </Alert>
+                                    </Snackbar>) : ''}
+                                    {cantOpen ? (<Snackbar open={cantOpen} autoHideDuration={6000} onClose={handleClose}>
+                                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                                            The Country {currCountry.country} is already added !
+                                        </Alert>
+                                    </Snackbar>) : ''}
+                                </div>
                             </div>
                         </Zoom>
                     </Row>
@@ -359,7 +433,7 @@ function Country(props) {
 
 
             ) :
-                <div>
+                <div >
                 </div>
             }
             <div className='error-message'>
@@ -381,5 +455,37 @@ function Country(props) {
     return page
 }
 
+const CREATE_COUNTRY_MUTATION = gql`
+    mutation addCountry(
+        $name: String!
+        $cases: Int!
+        $todayCases: Int!
+        $todayDeaths: Int!
+        $deaths: Int!
+        $population: Int!
+        $continent: String!
+        $active: Int!
+    ){
+        addCountry(country: {
+            name: $name
+            cases: $cases
+            todayCases: $todayCases
+            todayDeaths: $todayDeaths
+            deaths: $deaths
+            population: $population 
+            continent: $continent
+            active: $active
+        }){
+            id
+            name
+            todayCases
+            todayDeaths
+            deaths
+            population
+            continent
+            active
+        }
+    }
+`
 
 export default Country;

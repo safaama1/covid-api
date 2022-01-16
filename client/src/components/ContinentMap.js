@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom';
 import WorldMap from 'react-world-map'
-import '../ContinentMap.css'
+import '../css/ContinentMap.css'
 function ContinentMap({ continent }) {
 
     return (

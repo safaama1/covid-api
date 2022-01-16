@@ -1,15 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faVirus } from '@fortawesome/free-solid-svg-icons'
 import HomeIcon from '@mui/icons-material/Home';
 import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
 import { AuthContext } from '../context/auth';
-import { deepOrange, green, purple } from '@mui/material/colors';
-import { createTheme } from '@mui/material/styles';
-import LogoutIcon from '@mui/icons-material/Logout';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@mui/material/Button';
 

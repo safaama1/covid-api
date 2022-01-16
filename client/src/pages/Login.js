@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Slide from '@mui/material/Slide';
 import { AuthContext } from '../context/auth';
 
-import '../Register.css';
+import '../css/Register.css';
 
 function Login() {
     const context = useContext(AuthContext)

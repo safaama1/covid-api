@@ -7,15 +7,11 @@ import CoronavirusIcon from '@mui/icons-material/Coronavirus';
 import PublicIcon from '@mui/icons-material/Public';
 import MapChart from '../components/MapChart';
 import ReactTooltip from "react-tooltip";
-import MyLocationIcon from '@mui/icons-material/MyLocation';
-import { purple } from '@mui/material/colors';
-import { createTheme } from '@mui/material/styles';
 import Zoom from '@mui/material/Zoom';
 import Grow from '@mui/material/Grow';
-import TagFacesIcon from '@mui/icons-material/TagFaces';
 import { makeStyles } from '@material-ui/core/styles';
 
-import '../Profile.css'
+import '../css/Profile.css'
 
 function Profile(props) {
     const useStyles = makeStyles({
