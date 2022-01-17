@@ -6,7 +6,6 @@ import countryList from 'react-select-country-list'
 import { AuthContext } from '../context/auth';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag'
-import { useNavigate } from 'react-router-dom';
 import Home from './Home';
 import FormGroup from '@mui/material/FormGroup';
 import { makeStyles } from "@material-ui/core";
@@ -21,6 +20,8 @@ import Grow from '@mui/material/Grow';
 import AddIcon from '@mui/icons-material/Add';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+
 import '../css/Profile.css'
 import '../css/Country.css'
 import '../css/Home.css'
@@ -51,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
 function ChangeMapView({ coords }) {
     const map = useMap();
     map.setView(coords, map.getZoom());
-
     return null;
 }
 
@@ -64,10 +64,11 @@ function Country(props) {
     const [currCountry, setCurrCountry] = useState(null)
     const [value, setValue] = useState('');
     const [inputValue, setInputValue] = useState('');
-    const [loading, setLoading] = useState(false)
     const [slidePage, setSlidePage] = useState(false)
     const [error, setError] = useState(false)
     const [successful, setSuccessful] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [countryShowList, setCountryShowList] = useState(false)
     const [values, setValues] = useState({
         name: '',
         cases: 0,
@@ -78,26 +79,22 @@ function Country(props) {
         continent: '',
         active: 0
     })
-    const navigate = useNavigate();
 
     const [addCountry, { errors }] = useMutation(CREATE_COUNTRY_MUTATION, {
         variables: values,
         update(_, result) {
-            console.log(result)
             setSuccessful(true)
             setOpen(true);
-            // navigate('/')
         },
         onError(err) {
-            console.log(err.graphQLErrors[0].extensions.errors)
             setCantOpen(true)
         }
     })
 
     async function getData(country) {
+        setLoading(false)
         setCantOpen(false)
         setOpen(false)
-        setLoading(true);
         setSuccessful(false)
         try {
             const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=yesterday`)
@@ -105,7 +102,6 @@ function Country(props) {
                 setError(false)
                 const country_obj = await response.json()
                 setCurrCountry(country_obj)
-                console.log(country_obj)
                 setValues({
                     name: country_obj.country,
                     cases: country_obj.cases,
@@ -119,18 +115,21 @@ function Country(props) {
 
             } else {
                 setError(true)
-                console.log("NO Info about the page")
             }
         } catch (error) {
 
         }
-        setLoading(false);
         setSlidePage(true);
     }
 
-    const onClick = (event) => {
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    const onClick = async (event) => {
         event.preventDefault()
+        setLoading(true)
+        await delay(2000);
         addCountry()
+        setLoading(false)
     }
 
     const Alert = React.forwardRef(function Alert(props, ref) {
@@ -150,6 +149,7 @@ function Country(props) {
 
     useEffect(() => {
         setZoom(true)
+        setCountryShowList(true)
     }, [])
 
     const page = user ? (
@@ -157,36 +157,39 @@ function Country(props) {
 
             <Row className='mt-5' >
                 <Col className='mt-5'>
-                    <h2 className='content mt-5'>
-                        Select country:
-                    </h2>
-                    <div className='mt-4'>
-                        <FormGroup className={classes.formGroup} noValidate autoComplete="on">
-                            <Autocomplete
-                                disablePortal
-                                value={value}
-                                isOptionEqualToValue={(option, value) => option.id === value.id}
-                                onChange={async (event, newValue) => {
-                                    console.log(newValue)
-                                    setSlidePage(false)
-                                    setValue(newValue.label)
-                                    try {
-                                        await getData(newValue.label.toLowerCase());
-                                    } catch (err) {
+                    <Zoom in={countryShowList}>
+                        <h2 className='content mt-5'>
+                            Select country:
+                        </h2>
+                    </Zoom>
+                    <Zoom in={countryShowList} style={{ transitionDelay: countryShowList ? '500ms' : '0ms' }}>
+                        <div className='mt-4'>
+                            <FormGroup className={classes.formGroup} noValidate autoComplete="on">
+                                <Autocomplete
+                                    disablePortal
+                                    value={value}
+                                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    onChange={async (event, newValue) => {
+                                        setSlidePage(false)
+                                        setValue(newValue.label)
+                                        try {
+                                            await getData(newValue.label.toLowerCase());
+                                        } catch (err) {
 
-                                    }
-                                }}
-                                inputValue={inputValue}
-                                onInputChange={(event, newInputValue) => {
-                                    setInputValue(newInputValue);
-                                }}
-                                id="combo-box-demo"
-                                options={options}
-                                sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Country" />}
-                            />
-                        </FormGroup>
-                    </div>
+                                        }
+                                    }}
+                                    inputValue={inputValue}
+                                    onInputChange={(event, newInputValue) => {
+                                        setInputValue(newInputValue);
+                                    }}
+                                    id="combo-box-demo"
+                                    options={options}
+                                    sx={{ width: 300 }}
+                                    renderInput={(params) => <TextField {...params} label="Country" />}
+                                />
+                            </FormGroup>
+                        </div>
+                    </Zoom>
                     <div className='mt-5'>
 
 
@@ -412,7 +415,7 @@ function Country(props) {
                                     size="large"
                                     endIcon={<AddIcon />}
                                     onClick={onClick}>
-                                    Add Country
+                                    Add Country&nbsp;&nbsp;{loading ? <CircularProgress size={20} /> : ''}
                                 </Button>
                                 <div className='content mt-3'>
                                     {successful ? (<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -422,7 +425,7 @@ function Country(props) {
                                     </Snackbar>) : ''}
                                     {cantOpen ? (<Snackbar open={cantOpen} autoHideDuration={6000} onClose={handleClose}>
                                         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                                            The Country {currCountry.country} is already added !
+                                            {currCountry.country} has already been added!
                                         </Alert>
                                     </Snackbar>) : ''}
                                 </div>

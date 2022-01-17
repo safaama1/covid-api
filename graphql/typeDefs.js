@@ -12,6 +12,16 @@ module.exports = gql`
     continent: String!
     active: Int!
   }
+  type Continent {
+    id: ID!
+    name: String!
+    cases: Int!
+    todayCases: Int!
+    todayDeaths: Int!
+    deaths: Int!
+    population: Float!
+    active: Int!
+  }
   type User {
     id: ID!
     email: String!
@@ -35,15 +45,28 @@ module.exports = gql`
     continent: String!
     active: Int!
   }
+  input ContinentInput {
+    name: String!
+    cases: Int!
+    todayCases: Int!
+    todayDeaths: Int!
+    deaths: Int!
+    population: Float!
+    active: Int!
+  }
   type Query { 
     getUsers: [User]
     getCountry(countryID: ID!): Country!
     getCountries: [Country]
+    getContinent(continentID: ID!): Continent!
+    getContinents: [Continent]
   }
   type Mutation {
     register(registerInput: RegisterInput): User!
     login(username: String!, password: String!): User!
     addCountry(country: CountryInput!): Country!
     deleteCountry(countryID: ID!): String!
+    addContinent(continent: ContinentInput!): Continent!
+    deleteContinent(continentID: ID!): String!
   }
 `;
