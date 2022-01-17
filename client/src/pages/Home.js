@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Row, Col, Container, Button, Image, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationTriangle, Start } from '@fortawesome/free-solid-svg-icons'
-import Carousel from 'react-bootstrap/Carousel'
 import YoutubeEmbed from "../components/YoutubeEmbed";
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import Grow from '@mui/material/Grow';
@@ -10,7 +9,8 @@ import { AuthContext } from '../context/auth';
 import { makeStyles } from '@material-ui/core/styles';
 import StartIcon from '@mui/icons-material/Start';
 import Profile from './Profile';
-import '../Home.css';
+
+import '../css/Home.css';
 
 
 

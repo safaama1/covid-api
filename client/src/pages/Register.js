@@ -4,7 +4,6 @@ import { useMutation } from '@apollo/react-hooks'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
 import gql from 'graphql-tag';
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
@@ -12,10 +11,8 @@ import LoginIcon from '@mui/icons-material/Login';
 import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
 import Slide from '@mui/material/Slide';
-import FormControl from '@mui/material/FormControl';
-import FormHelperText from '@mui/material/FormHelperText';
 
-import '../Register.css';
+import '../css/Register.css';
 
 function Register(props) {
     const context = useContext(AuthContext)
