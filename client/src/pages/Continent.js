@@ -6,7 +6,8 @@ import { AuthContext } from '../context/auth';
 import Home from './Home';
 import FormGroup from '@mui/material/FormGroup';
 import { makeStyles } from "@material-ui/core";
-import { set } from 'mongoose';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import Zoom from '@mui/material/Zoom';
@@ -17,6 +18,10 @@ import ContinentMap from "../components/ContinentMap";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+
 import '../css/Profile.css'
 import '../css/Country.css'
 import '../css/Home.css'
@@ -56,13 +61,30 @@ function Continent(props) {
     const [error, setError] = useState(false)
     const [continentName, setContinent] = useState('')
     const [allCountries, setAllCountries] = useState(null)
+    const [successful, setSuccessful] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [countryShowList, setCountryShowList] = useState(false)
     async function getData(continent) {
+        setLoading(false)
+        setCantOpen(false)
+        setOpen(false)
+        setSuccessful(false)
         try {
+
             const response = await fetch(`https://disease.sh/v3/covid-19/continents/${continent}?yesterday=yesterday&strict=true`)
             if (response.ok) {
                 setError(false)
                 const continent_obj = await response.json()
                 setCurrContinent(continent_obj)
+                setValues({
+                    name: continent_obj.continent,
+                    cases: continent_obj.cases,
+                    todayCases: continent_obj.todayCases,
+                    todayDeaths: continent_obj.todayDeaths,
+                    deaths: continent_obj.deaths,
+                    population: continent_obj.population,
+                    active: continent_obj.active
+                })
                 switch (continent_obj.continent) {
                     case 'North America':
                         setContinent('na');
@@ -87,20 +109,62 @@ function Continent(props) {
                 }
             } else {
                 setError(true)
-                console.log("NO Info about the page")
             }
         } catch (error) {
 
         }
         setSlidePage(true);
     }
+    const [values, setValues] = useState({
+        name: '',
+        cases: 0,
+        todayCases: 0,
+        todayDeaths: 0,
+        deaths: 0,
+        population: 0,
+        active: 0
+    })
+    const [open, setOpen] = useState(false);
+    const [cantOpen, setCantOpen] = useState(false);
+    const [addContinent, { errors }] = useMutation(CREATE_CONTINENT_MUTATION, {
+        variables: values,
+        update(_, result) {
+            console.log(result)
+            setSuccessful(true)
+            setOpen(true);
+        },
+        onError(err) {
+            setCantOpen(true)
+        }
+    })
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+        setCantOpen(false);
+    };
+    const Alert = React.forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
     async function getCountries() {
         const response2 = await fetch('https://disease.sh/v3/covid-19/countries')
         const countries_obj = await response2.json()
         setAllCountries(countries_obj)
     }
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    const onClick = async (event) => {
+        setLoading(true)
+        await delay(2000);
+        event.preventDefault()
+        addContinent()
+        setLoading(false)
+    }
     useEffect(() => {
         getCountries()
+        setCountryShowList(true)
         setZoom(true)
     }, [])
 
@@ -109,35 +173,41 @@ function Continent(props) {
 
             <Row className='mt-5' >
                 <Col className='mt-5'>
-                    <h2 className='content mt-5'>
-                        Select continent:
-                    </h2>
-                    <div className='mt-4'>
-                        <FormGroup className={classes.formGroup} noValidate autoComplete="on">
-                            <Autocomplete
-                                disablePortal
-                                value={value}
-                                onChange={async (event, newValue) => {
-                                    setSlidePage(false)
-                                    setValue(newValue)
-                                    try {
-                                        await getData(newValue.toLowerCase());
-                                    } catch (err) {
+                    <Zoom in={countryShowList}>
+                        <h2 className='content mt-5'>
+                            Select continent:
+                        </h2>
+                    </Zoom>
+                    <Zoom in={countryShowList} style={{ transitionDelay: countryShowList ? '500ms' : '0ms' }}>
 
-                                    }
-                                }}
-                                isOptionEqualToValue={(option, value) => option.id === value.id}
-                                inputValue={inputValue}
-                                onInputChange={(event, newInputValue) => {
-                                    setInputValue(newInputValue);
-                                }}
-                                id="combo-box-demo"
-                                options={options}
-                                sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...params} label="Continent" />}
-                            />
-                        </FormGroup>
-                    </div>
+                        <div className='mt-4'>
+                            <FormGroup className={classes.formGroup} noValidate autoComplete="on">
+                                <Autocomplete
+                                    disablePortal
+                                    value={value}
+                                    onChange={async (event, newValue) => {
+                                        setSlidePage(false)
+                                        setValue(newValue)
+                                        try {
+                                            await getData(newValue.toLowerCase());
+                                        } catch (err) {
+
+                                        }
+                                    }}
+                                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    inputValue={inputValue}
+                                    onInputChange={(event, newInputValue) => {
+                                        setInputValue(newInputValue);
+                                    }}
+                                    id="combo-box-demo"
+                                    options={options}
+                                    sx={{ width: 300 }}
+                                    renderInput={(params) => <TextField {...params} label="Continent" />}
+                                />
+                            </FormGroup>
+                        </div>
+                    </Zoom>
+
                     <div className='mt-5'>
 
 
@@ -368,9 +438,22 @@ function Continent(props) {
                                     color='success'
                                     variant="contained"
                                     size="large"
+                                    onClick={onClick}
                                     endIcon={<AddIcon />}>
-                                    Add Continent
+                                    Add Continent&nbsp;&nbsp;{loading ? <CircularProgress size={20} /> : ''}
                                 </Button>
+                                <div className='content mt-3'>
+                                    {successful ? (<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                                            The Continent {currContinent.continent} has been added successfully!
+                                        </Alert>
+                                    </Snackbar>) : ''}
+                                    {cantOpen ? (<Snackbar open={cantOpen} autoHideDuration={6000} onClose={handleClose}>
+                                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                                            {currContinent.continent} has already been added!
+                                        </Alert>
+                                    </Snackbar>) : ''}
+                                </div>
                             </div>
                         </Zoom>
                     </Row>
@@ -400,5 +483,34 @@ function Continent(props) {
     return page
 }
 
+const CREATE_CONTINENT_MUTATION = gql`
+    mutation addContinent(
+        $name: String!
+        $cases: Int!
+        $todayCases: Int!
+        $todayDeaths: Int!
+        $deaths: Int!
+        $population: Float!
+        $active: Int!
+    ){
+        addContinent(continent: {
+            name: $name
+            cases: $cases
+            todayCases: $todayCases
+            todayDeaths: $todayDeaths
+            deaths: $deaths
+            population: $population 
+            active: $active
+        }){
+            id
+            name
+            todayCases
+            todayDeaths
+            deaths
+            population
+            active
+        }
+    }
+`
 
 export default Continent;
