@@ -11,6 +11,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
 import Slide from '@mui/material/Slide';
+import Backdrop from '@mui/material/Backdrop';
 
 import '../css/Register.css';
 
@@ -25,7 +26,7 @@ function Register(props) {
         password: '',
         confirmPassword: ''
     })
-
+    const [open, setOpen] = useState(false);
     const onChange = (event) => {
         setValues({ ...values, [event.target.name]: event.target.value })
     }
@@ -36,12 +37,14 @@ function Register(props) {
             navigate('/')
         },
         onError(err) {
+            setOpen(false)
             console.log(err.graphQLErrors[0].extensions.errors)
             setErrors(err.graphQLErrors[0].extensions.errors)
         }
         , variables: values
     });
     const onSubmit = (event) => {
+        setOpen(true)
         event.preventDefault()
         addUser()
     }
@@ -125,6 +128,12 @@ function Register(props) {
                             <p className="forgot-password text-right mt-2">
                                 Already registered? <a href="/login">sign in</a>
                             </p>
+                            <Backdrop
+                                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                                open={open}
+                            >
+                                <CircularProgress color="inherit" />
+                            </Backdrop>
                         </form>
                         {Object.keys(errors).length > 0 && (
                             <Stack sx={{ width: '100%' }} spacing={2}>

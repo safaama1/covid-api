@@ -11,6 +11,8 @@ import LoginIcon from '@mui/icons-material/Login';
 import Button from '@mui/material/Button';
 import Slide from '@mui/material/Slide';
 import { AuthContext } from '../context/auth';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import '../css/Register.css';
 
@@ -23,7 +25,7 @@ function Login() {
         username: '',
         password: ''
     })
-
+    const [open, setOpen] = useState(false);
     const onChange = (event) => {
         setValues({ ...values, [event.target.name]: event.target.value })
     }
@@ -34,11 +36,13 @@ function Login() {
             navigate('/')
         },
         onError(err) {
+            setOpen(false);
             setErrors(err.graphQLErrors[0].extensions.errors)
         }
         , variables: values
     });
     const onSubmit = (event) => {
+        setOpen(true);
         event.preventDefault()
         loginUser()
     }
@@ -82,6 +86,12 @@ function Login() {
                                 />
                             </div>
                             <Button type='submit' color="inherit" variant="contained" size="medium" fullWidth>Log In&nbsp;&nbsp;<LoginIcon /></Button>
+                            <Backdrop
+                                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                                open={open}
+                            >
+                                <CircularProgress color="inherit" />
+                            </Backdrop>
                             <p className="forgot-password text-right mt-2">
                                 Not a member? <a href="/register">sign up</a>
                             </p>

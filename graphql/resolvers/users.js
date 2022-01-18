@@ -10,6 +10,11 @@ const {
 const SECRET_KEY = process.env.SECRET_KEY
 const User = require('../../models/User');
 
+// variables to check password strength 
+var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
+
+
 function generateToken(user) {
     return jwt.sign(
         {
@@ -83,6 +88,13 @@ module.exports = {
                 throw new UserInputError('Username is taken', {
                     errors: {
                         username: 'This username is taken'
+                    }
+                });
+            }
+            if (!strongRegex.test(password) && !mediumRegex.test(password)) {
+                throw new UserInputError('Password is weak!', {
+                    errors: {
+                        password: 'Password is weak!'
                     }
                 });
             }

@@ -87,6 +87,7 @@ function Country(props) {
             setOpen(true);
         },
         onError(err) {
+            console.log(errors)
             setCantOpen(true)
         }
     })
