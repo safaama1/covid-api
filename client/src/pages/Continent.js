@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -134,6 +134,7 @@ function Continent(props) {
             setOpen(true);
         },
         onError(err) {
+            console.log(errors)
             setCantOpen(true)
         }
     })
