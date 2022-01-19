@@ -83,7 +83,9 @@ function Continent(props) {
                     todayDeaths: continent_obj.todayDeaths,
                     deaths: continent_obj.deaths,
                     population: continent_obj.population,
-                    active: continent_obj.active
+                    active: continent_obj.active,
+                    recovered: continent_obj.recovered,
+                    todayRecovered: continent_obj.todayRecovered
                 })
                 switch (continent_obj.continent) {
                     case 'North America':
@@ -122,7 +124,9 @@ function Continent(props) {
         todayDeaths: 0,
         deaths: 0,
         population: 0,
-        active: 0
+        active: 0,
+        recovered: 0,
+        todayRecovered: 0
     })
     const [open, setOpen] = useState(false);
     const [cantOpen, setCantOpen] = useState(false);
@@ -346,7 +350,26 @@ function Continent(props) {
                             </h4>
                         </Col>
                     </Row>
-
+                    <Row className='info-card shadow mt-5'>
+                        <Col className=' mt-5 mb-5 ' xs={12} md={6}>
+                            <h2 className='country-info mt-4'>
+                                Tests
+                                <br />
+                            </h2>
+                            <h4 className="total-recovered mt-4">
+                                {currContinent.tests}
+                            </h4>
+                        </Col>
+                        <Col className=' mt-5 mb-5 ' xs={12} md={6}>
+                            <h2 className='country-info mt-4'>
+                                Critical
+                                <br />
+                            </h2>
+                            <h4 className="total-deaths mt-4">
+                                {currContinent.critical}
+                            </h4>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col className='mt-5 mb-5' xs={12} md={6}>
                             <h1 className='total-header mb-3 '>
@@ -493,6 +516,8 @@ const CREATE_CONTINENT_MUTATION = gql`
         $deaths: Int!
         $population: Float!
         $active: Int!
+        $recovered: Int!
+        $todayRecovered: Int!
     ){
         addContinent(continent: {
             name: $name
@@ -502,6 +527,8 @@ const CREATE_CONTINENT_MUTATION = gql`
             deaths: $deaths
             population: $population 
             active: $active
+            recovered: $recovered
+            todayRecovered: $todayRecovered
         }){
             id
             name
@@ -510,6 +537,8 @@ const CREATE_CONTINENT_MUTATION = gql`
             deaths
             population
             active
+            recovered
+            todayRecovered
         }
     }
 `

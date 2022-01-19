@@ -11,6 +11,8 @@ module.exports = gql`
     population: Int!
     continent: String!
     active: Int!
+    recovered: Int!
+    todayRecovered: Int!
   }
   type Continent {
     id: ID!
@@ -21,6 +23,8 @@ module.exports = gql`
     deaths: Int!
     population: Float!
     active: Int!
+    recovered: Int!
+    todayRecovered: Int!
   }
   type User {
     id: ID!
@@ -44,6 +48,8 @@ module.exports = gql`
     population: Int!
     continent: String!
     active: Int!
+    recovered: Int!
+    todayRecovered: Int!
   }
   input ContinentInput {
     name: String!
@@ -53,6 +59,8 @@ module.exports = gql`
     deaths: Int!
     population: Float!
     active: Int!
+    recovered: Int!
+    todayRecovered: Int!
   }
   type Query { 
     getUsers: [User]

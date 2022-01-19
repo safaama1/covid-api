@@ -77,7 +77,9 @@ function Country(props) {
         deaths: 0,
         population: 0,
         continent: '',
-        active: 0
+        active: 0,
+        recovered: 0,
+        todayRecovered: 0
     })
 
     const [addCountry, { errors }] = useMutation(CREATE_COUNTRY_MUTATION, {
@@ -111,7 +113,9 @@ function Country(props) {
                     deaths: country_obj.deaths,
                     population: country_obj.population,
                     continent: country_obj.continent,
-                    active: country_obj.active
+                    active: country_obj.active,
+                    recovered: country_obj.recovered,
+                    todayRecovered: country_obj.todayRecovered
                 })
 
             } else {
@@ -324,7 +328,26 @@ function Country(props) {
                             </h4>
                         </Col>
                     </Row>
-
+                    <Row className='info-card shadow mt-5'>
+                        <Col className=' mt-5 mb-5 ' xs={12} md={6}>
+                            <h2 className='country-info mt-4'>
+                                Tests
+                                <br />
+                            </h2>
+                            <h4 className="total-recovered mt-4">
+                                {currCountry.tests}
+                            </h4>
+                        </Col>
+                        <Col className=' mt-5 mb-5 ' xs={12} md={6}>
+                            <h2 className='country-info mt-4'>
+                                Critical
+                                <br />
+                            </h2>
+                            <h4 className="total-deaths mt-4">
+                                {currCountry.critical}
+                            </h4>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col className='mt-5 mb-5' xs={12} md={6}>
                             {/* <div>{`value: ${value !== null ? `'${value}'` : 'null'}`}</div>
@@ -469,6 +492,8 @@ const CREATE_COUNTRY_MUTATION = gql`
         $population: Int!
         $continent: String!
         $active: Int!
+        $recovered: Int!
+        $todayRecovered: Int!
     ){
         addCountry(country: {
             name: $name
@@ -479,6 +504,8 @@ const CREATE_COUNTRY_MUTATION = gql`
             population: $population 
             continent: $continent
             active: $active
+            recovered: $recovered
+            todayRecovered: $todayRecovered
         }){
             id
             name
@@ -488,6 +515,8 @@ const CREATE_COUNTRY_MUTATION = gql`
             population
             continent
             active
+            recovered
+            todayRecovered
         }
     }
 `

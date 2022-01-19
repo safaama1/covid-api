@@ -7,6 +7,8 @@ const countrySchema = new Schema({
     deaths: Number,
     population: Number,
     continent: String,
-    active: Number
+    active: Number,
+    recovered: Number,
+    todayRecovered: Number
 });
 module.exports = model('Country', countrySchema)

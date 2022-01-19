@@ -44,7 +44,10 @@ module.exports = {
                     deaths,
                     population,
                     continent,
-                    active }
+                    active,
+                    recovered,
+                    todayRecovered
+                }
             }
         ) {
             const country = await Country.findOne({ name });
@@ -63,7 +66,9 @@ module.exports = {
                 deaths,
                 population,
                 continent,
-                active
+                active,
+                recovered,
+                todayRecovered
             });
 
             const res = await newCountry.save();
