@@ -12,7 +12,10 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
 import Slide from '@mui/material/Slide';
 import Backdrop from '@mui/material/Backdrop';
-
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormLabel from '@mui/material/FormLabel';
 import '../css/Register.css';
 
 function Register(props) {
@@ -24,7 +27,8 @@ function Register(props) {
         username: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        type: ''
     })
     const [open, setOpen] = useState(false);
     const onChange = (event) => {
@@ -53,11 +57,11 @@ function Register(props) {
     }, [])
     return (
         <Slide direction="up" in={slidePage} mountOnEnter unmountOnExit timeout={1000}>
-            <Container className='mt-5' fluid='xxl'>
+            <Container className='mt-5' fluid='xxl' >
                 <br />
                 <br />
                 <br />
-                <Row className='shadow-lg p-3 mb-5 bg-white rounded'>
+                <Row className='shadow-lg p-3 mb-5 bg-white' style={{ borderRadius: "30px" }}>
                     <Col className="mt-3 mb-3" md={5} xs={12}>
                         <form onSubmit={onSubmit} className={loading ? 'loading' : ''} noValidate>
 
@@ -102,7 +106,6 @@ function Register(props) {
                                     value={values.password}
                                     onChange={onChange}
                                     error={errors.password ? true : false}
-                                    helperText={errors.password ? "Incorrect Password." : ""}
                                     fullWidth
                                 />
                             </div>
@@ -116,11 +119,29 @@ function Register(props) {
                                     autoComplete="current-password"
                                     value={values.confirmPassword}
                                     error={errors.confirmPassword ? true : false}
-                                    helperText={errors.password ? "Incorrect Password." : ""}
                                     onChange={onChange}
                                     fullWidth
                                 />
                             </div>
+                            <FormLabel component="legend">User Type</FormLabel>
+                            <RadioGroup row aria-label="user" name="row-radio-buttons-group">
+                                <FormControlLabel
+                                    id="userType"
+                                    name='type'
+                                    value="User"
+                                    control={<Radio />}
+                                    label="User"
+                                    onChange={onChange}
+                                />
+                                <FormControlLabel
+                                    id="adminType"
+                                    name='type'
+                                    value="Admin"
+                                    control={<Radio />}
+                                    label="Admin"
+                                    onChange={onChange}
+                                />
+                            </RadioGroup>
                             <Button type='submit' color="inherit" variant="contained" size="medium" fullWidth> {
                                 loading ? (<CircularProgress />) : (<LoginIcon />)
                             }
@@ -159,6 +180,7 @@ const REGISTER_USER = gql`
         $email: String!
         $password: String!
         $confirmPassword: String!
+        $type: String!
     ) {
         register(
             registerInput: {
@@ -166,9 +188,10 @@ const REGISTER_USER = gql`
                 email: $email
                 password: $password
                 confirmPassword: $confirmPassword
+                type: $type
             }
         ){
-            id email username createdAt token
+            id email username createdAt type token
         }
     }
 `

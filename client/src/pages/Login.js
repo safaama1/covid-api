@@ -55,7 +55,7 @@ function Login() {
                 <br />
                 <br />
                 <br />
-                <Row className='shadow-lg p-3 mb-5 bg-white'>
+                <Row className='shadow-lg p-3 mb-5 bg-white' style={{ borderRadius: "30px" }}>
                     <Col className="mt-3" md={5} xs={12}>
                         <form onSubmit={onSubmit} noValidate>
                             <h3 className='text-center mb-4'>Log In</h3>
@@ -122,7 +122,7 @@ const LOGIN_USER = gql`
             username: $username
             password: $password
         ){
-            id email username createdAt token
+            id email username createdAt type token
         }
     }
 `

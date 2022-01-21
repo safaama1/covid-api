@@ -9,8 +9,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import { AuthProvider } from './context/auth'
 import AuthRoute from './util/AuthRoute'
+import DataRoute from './util/DataRoute'
+import AdminRoute from './util/AdminRoute'
+
 import Country from './pages/Country';
 import Continent from './pages/Continent';
+import Admin from './pages/Admin';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -40,11 +44,21 @@ function App() {
               </AuthRoute>}>
             </Route>
             <Route exact path="/country" element={
-              <Country />
+              <DataRoute>
+                <Country />
+              </DataRoute>
             }>
             </Route>
             <Route exact path="/continent" element={
-              <Continent />
+              <DataRoute>
+                <Continent />
+              </DataRoute>
+            }>
+            </Route>
+            <Route exact path="/admin" element={
+              <AdminRoute>
+                <Admin />
+              </AdminRoute>
             }>
             </Route>
           </Routes>

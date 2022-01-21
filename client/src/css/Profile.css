@@ -14,11 +14,18 @@
 }
 
 .content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     font-family: 'Quicksand', sans-serif;
     text-align: center;
     font-size: 30px;
     font-weight: bold;
     color: rgb(114, 113, 113);
+}
+.content > div {
+    margin: 5px 5px 5px 5px;
 }
 
 
@@ -28,4 +35,37 @@
     font-size: 30px;
     font-weight: bold;
     margin-top: 120px;
+}
+
+.user-info {
+    font-family: 'Quicksand', sans-serif;
+    border-style: solid;
+    border-color: #21ABAB;
+    padding: 4px 4px 4px 4px;
+    border-radius: 20px;
+    background-color: aliceblue;
+}
+
+.user-info>div {
+    color: #21ABAB;
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+
+.red-info {
+    font-family: 'Quicksand', sans-serif;
+    color: tomato;
+}
+
+.normal-info {
+    font-family: 'Quicksand', sans-serif;
+    color: #21ABAB;
+}
+
+.table-title {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 40px;
+    text-align: center;
+    font-weight: bolder;
+    color: #21ABAB
 }

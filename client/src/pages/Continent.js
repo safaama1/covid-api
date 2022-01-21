@@ -71,7 +71,7 @@ function Continent(props) {
         setSuccessful(false)
         try {
 
-            const response = await fetch(`https://disease.sh/v3/covid-19/continents/${continent}?yesterday=yesterday&strict=true`)
+            const response = await fetch(`https://disease.sh/v3/covid-19/continents/${continent}?yesterday=true&strict=true`)
             if (response.ok) {
                 setError(false)
                 const continent_obj = await response.json()
@@ -404,11 +404,11 @@ function Continent(props) {
                             </h1>
                             <div>
                                 <Doughnut data={{
-                                    labels: ['Total Cases', 'Total Recovered', 'Total Deaths'],
+                                    labels: ['Active', 'Total Recovered', 'Total Deaths'],
                                     datasets: [
                                         {
-                                            label: 'Total Cases',
-                                            data: [currContinent.cases, currContinent.recovered, currContinent.deaths],
+                                            label: 'Total',
+                                            data: [currContinent.active, currContinent.recovered, currContinent.deaths],
                                             backgroundColor: [
                                                 'rgb(255, 205, 86)',
                                                 'rgb(54, 162, 235)',

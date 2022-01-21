@@ -14,13 +14,15 @@ const User = require('../../models/User');
 var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
 var mediumRegex = new RegExp("^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})");
 
+// TODO : add admin prop to the user input 
 
 function generateToken(user) {
     return jwt.sign(
         {
             id: user.id,
             email: user.email,
-            username: user.username
+            username: user.username,
+            type: user.type
         },
         SECRET_KEY,
         { expiresIn: '1h' }
@@ -70,7 +72,7 @@ module.exports = {
         async register(
             _,
             {
-                registerInput: { username, email, password, confirmPassword }
+                registerInput: { username, email, password, confirmPassword, type }
             }
         ) {
             // Validate user data
@@ -78,7 +80,8 @@ module.exports = {
                 username,
                 email,
                 password,
-                confirmPassword
+                confirmPassword,
+                type
             );
             if (!valid) {
                 throw new UserInputError('Errors', { errors });
@@ -105,7 +108,8 @@ module.exports = {
                 email,
                 username,
                 password,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                type
             });
 
             const res = await newUser.save();

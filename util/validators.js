@@ -2,7 +2,8 @@ module.exports.validateRegisterInput = (
     username,
     email,
     password,
-    confirmPassword
+    confirmPassword,
+    type
 ) => {
     const errors = {};
     if (username.trim() === '') {
@@ -21,7 +22,9 @@ module.exports.validateRegisterInput = (
     } else if (password !== confirmPassword) {
         errors.confirmPassword = 'Passwords must match';
     }
-
+    if (type !== 'User' && type !== 'Admin' ) {
+        errors.type = 'Type must be : User or Admin';
+    }
     return {
         errors,
         valid: Object.keys(errors).length < 1
