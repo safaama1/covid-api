@@ -100,7 +100,7 @@ function Country(props) {
         setOpen(false)
         setSuccessful(false)
         try {
-            const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=yesterday`)
+            const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=true&strict=true`)
             if (response.ok) {
                 setError(false)
                 const country_obj = await response.json()
@@ -329,7 +329,7 @@ function Country(props) {
                         </Col>
                     </Row>
                     <Row className='info-card shadow mt-5'>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={6}>
+                        <Col className=' mt-5 mb-5 ' xs={12} md={4}>
                             <h2 className='country-info mt-4'>
                                 Tests
                                 <br />
@@ -338,7 +338,7 @@ function Country(props) {
                                 {currCountry.tests}
                             </h4>
                         </Col>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={6}>
+                        <Col className=' mt-5 mb-5 ' xs={12} md={4}>
                             <h2 className='country-info mt-4'>
                                 Critical
                                 <br />
@@ -347,14 +347,18 @@ function Country(props) {
                                 {currCountry.critical}
                             </h4>
                         </Col>
+                        <Col className=' mt-5 mb-5 ' xs={12} md={4}>
+                            <h2 className='country-info mt-4'>
+                                Active
+                                <br />
+                            </h2>
+                            <h4 className="total-deaths mt-4">
+                                {currCountry.active}
+                            </h4>
+                        </Col>
                     </Row>
                     <Row>
                         <Col className='mt-5 mb-5' xs={12} md={6}>
-                            {/* <div>{`value: ${value !== null ? `'${value}'` : 'null'}`}</div>
-                            <div>{`inputValue: '${inputValue}'`}</div> */}
-                            <h1 className='total-header mb-3 '>
-                                Today Stats
-                            </h1>
                             <div>
                                 <Doughnut data={{
                                     labels: ['Today Cases', 'Today Recovered', 'Today Deaths'],
@@ -379,16 +383,14 @@ function Country(props) {
                             </div>
                         </Col>
                         <Col className='mt-5' xs={12} md={6}>
-                            <h1 className='total-header mb-3'>
-                                Total Stats
-                            </h1>
+                            
                             <div>
                                 <Doughnut data={{
-                                    labels: ['Total Cases', 'Total Recovered', 'Total Deaths'],
+                                    labels: ['Active', 'Total Recovered', 'Total Deaths'],
                                     datasets: [
                                         {
-                                            label: 'Total Cases',
-                                            data: [currCountry.cases, currCountry.recovered, currCountry.deaths],
+                                            label: 'Total',
+                                            data: [currCountry.active, currCountry.recovered, currCountry.deaths],
                                             backgroundColor: [
                                                 'rgb(255, 205, 86)',
                                                 'rgb(54, 162, 235)',
@@ -408,7 +410,7 @@ function Country(props) {
                     </Row>
                     <Row className='info-card shadow mt-5'>
                         <Col>
-                            <h1 className='total-header mt-5 mb-5'>
+                            <h1 className='total-header mt-3 mb-3'>
                                 {currCountry.country}'s Location <LocationOnIcon style={{ marginTop: -12, fontSize: 45, color: "#21ABAB" }} />
                             </h1>
                             <MapContainer
