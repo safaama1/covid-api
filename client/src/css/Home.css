@@ -6,9 +6,13 @@
 }
 
 .title-intro {
-    font-family: sans-serif;
-    font-weight: 900;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 45px;
+    font-weight: bolder;
+}
 
+.intro-info {
+    font-family: 'Quicksand', sans-serif;
 }
 
 .cases-header {
@@ -48,4 +52,49 @@
     text-align: center;
     font-size: xx-large;
     font-weight: 900;
+}
+
+.title {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 40px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.cards {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.prev-card {
+    margin: 8px 8px 8px 8px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 40px;
+}
+
+.card-title {
+    padding: 5px 5px 5px 5px;
+    margin-top: 10px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 30px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.card-info {
+    padding: 5px 5px 5px 5px;
+    margin-top: 10px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 20px;
+    text-align: center;
+}
+
+.card-image {
+    display: block;
+    width: 18rem;
+    height: 18rem;
+    margin-left: auto;
+    margin-right: auto;
 }
