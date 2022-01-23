@@ -2,8 +2,7 @@ import { React, useEffect, useState, useContext } from 'react'
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks'
 import { useNavigate } from 'react-router-dom';
-import gql from 'graphql-tag';
-import Box from '@mui/material/Box';
+import { LOGIN_USER } from '../util/graphql';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
@@ -113,17 +112,4 @@ function Login() {
     );
 
 }
-const LOGIN_USER = gql`
-    mutation login(
-        $username: String!
-        $password: String!
-    ) {
-        login(
-            username: $username
-            password: $password
-        ){
-            id email username createdAt type token
-        }
-    }
-`
 export default Login;

@@ -3,7 +3,7 @@ import { Container, Row, Col, Image } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth';
-import gql from 'graphql-tag';
+import { REGISTER_USER } from '../util/graphql'; 
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
@@ -123,7 +123,7 @@ function Register(props) {
                                     fullWidth
                                 />
                             </div>
-                            <FormLabel component="legend">User Type</FormLabel>
+                            <FormLabel component="legend">User Type:</FormLabel>
                             <RadioGroup row aria-label="user" name="row-radio-buttons-group">
                                 <FormControlLabel
                                     id="userType"
@@ -174,25 +174,4 @@ function Register(props) {
 
 }
 
-const REGISTER_USER = gql`
-    mutation register(
-        $username: String!
-        $email: String!
-        $password: String!
-        $confirmPassword: String!
-        $type: String!
-    ) {
-        register(
-            registerInput: {
-                username: $username
-                email: $email
-                password: $password
-                confirmPassword: $confirmPassword
-                type: $type
-            }
-        ){
-            id email username createdAt type token
-        }
-    }
-`
 export default Register;

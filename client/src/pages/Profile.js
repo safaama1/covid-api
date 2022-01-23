@@ -12,7 +12,6 @@ import Grow from '@mui/material/Grow';
 import Box from '@mui/material/Box';
 import Popper from '@mui/material/Popper';
 import Fade from '@mui/material/Fade';
-import Chip from '@mui/material/Chip';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -21,7 +20,6 @@ import '../css/Profile.css'
 import PersonIcon from '@mui/icons-material/Person';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import DateRangeIcon from '@mui/icons-material/DateRange';
 
 function Profile(props) {
     const useStyles = makeStyles({
@@ -49,10 +47,8 @@ function Profile(props) {
         setAnchorEl(event.currentTarget);
         setOpen((previousOpen) => !previousOpen);
     };
-
     const canBeOpen = open && Boolean(anchorEl);
     const id = canBeOpen ? 'transition-popper' : undefined;
-
     const classes = useStyles()
 
     useEffect(() => {
@@ -68,7 +64,11 @@ function Profile(props) {
                 <Row className='mt-5'>
                     <Col className='mt-5'>
                         <h4 className='welcome-message mt-5'>
-                            Welcome <Chip label={user.username} variant="outlined" onClick={handleClick} sx={{ marginBottom: 0.5 }} />
+                            Welcome
+                            <Button className={classes.button} variant="contained" onClick={handleClick} size="small"
+                                style={{ borderRadius: 20, fontSize: '16px', fontFamily: 'Quicksand', margin: 5, marginBottom: "10px", fontWeight: 'bold' }}>
+                                {user.username}
+                            </Button>
                             &nbsp;!
                         </h4>
                         <Popper id={id} open={open} anchorEl={anchorEl} transition>
@@ -93,12 +93,6 @@ function Profile(props) {
                                                 {user.type ? user.type : ''}
                                             </p>
                                         </div>
-                                        <div>
-                                            <DateRangeIcon style={{ fontSize: 20 }} /> Joined:
-                                            <p style={{ color: "black", fontWeight: 700, marginBottom: 0 }}>
-                                                {user.createdAt ? user.createdAt.slice(0, 10) : ''}
-                                            </p>
-                                        </div>
                                     </Box>
                                 </Fade>
                             )}
@@ -117,16 +111,13 @@ function Profile(props) {
                                     </Button>
                                 </Zoom>
                             </div>
-                            
                             <div>
                                 <Zoom in={zoom}>
                                     <Button className={classes.button} color='success' variant="contained" href="/continent" endIcon={<PublicIcon />} size="large">
                                         Continente
                                     </Button>
                                 </Zoom>
-
                             </div>
-
                         </div>
                         <div className=''>
                             <h1 className='map-title mb-1'>
@@ -142,6 +133,4 @@ function Profile(props) {
         </Grow>
     );
 }
-
-
 export default Profile;

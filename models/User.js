@@ -1,5 +1,4 @@
 const { model, Schema } = require('mongoose')
-// TODO : add admin prop
 const userSchema = new Schema({
     username: String,
     password: String,

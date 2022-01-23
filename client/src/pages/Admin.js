@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
+import { GET_COUNTRIES_CONTINENTS } from '../util/graphql'
 
 import { AuthContext } from '../context/auth';
 import Home from './Home';
@@ -9,7 +9,6 @@ import DeleteButton from '../components/DeleteButton';
 
 import { Container } from 'react-bootstrap';
 
-import Grow from '@mui/material/Grow';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -18,10 +17,11 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+import Slide from 'react-reveal/Slide';
+
 const Admin = (props) => {
     const navigate = useNavigate();
     const { user } = useContext(AuthContext)
-    const [slidePage, setSlidePage] = useState(false);
     //get all the countries & continents from the database (two queries calls) 
     const {
         data
@@ -31,18 +31,15 @@ const Admin = (props) => {
         navigate('/admin')
     }
 
-    useEffect(() => {
-        setSlidePage(true)
-    }, [])
     const adminPage = user && user.type === "Admin" ? (
-        <Grow
-            in={slidePage}
-            style={{ transformOrigin: '0 0 0' }}
-            {...(slidePage ? { timeout: 2000 } : {})}   >
-            <Container style={{ paddingTop: 40, b: 1, borderRadius: "50px", fontFamily: "Quicksand", marginBottom: "20px" }}>
+        <Container style={{ paddingTop: 40, b: 1, borderRadius: "50px", fontFamily: "Quicksand", marginBottom: "20px" }}>
+            <Slide left>
                 <h1 className='table-title'>
                     Countries
                 </h1>
+            </Slide>
+            <Slide left>
+                {/* saved countries COVID-19 data   */}
                 <TableContainer component={Paper} style={{ marginTop: "50px", b: 1, borderRadius: "20px" }}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table" >
                         <caption>COVID-19 data for all countries saved in the database  </caption>
@@ -68,16 +65,36 @@ const Admin = (props) => {
                                         key={country.id}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <TableCell style={{ color: "#21ABAB", fontWeight: "bold", fontSize: "18px" }}>{country.name}</TableCell>
-                                        <TableCell style={{ color: "#21ABAB", textAlign: "center" }}>{country.continent}</TableCell>
-                                        <TableCell style={{ textAlign: "center" }}>{country.population}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{country.cases}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{country.deaths}</TableCell>
-                                        <TableCell style={{ color: "#32CD32", textAlign: "center" }}>{country.recovered}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{country.active}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{country.todayCases}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{country.todayDeaths}</TableCell>
-                                        <TableCell style={{ color: "#32CD32", textAlign: "center" }}>{country.todayRecovered}</TableCell>
+                                        <TableCell style={{ color: "#21ABAB", fontFamily: "Quicksand", fontWeight: "bold", fontSize: "18px" }}>
+                                            {country.name}
+                                        </TableCell>
+                                        <TableCell style={{ color: "#21ABAB", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.continent}
+                                        </TableCell>
+                                        <TableCell style={{ textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.population}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.cases}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.deaths}
+                                        </TableCell>
+                                        <TableCell style={{ color: "#32CD32", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.recovered}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.active}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.todayCases}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", fontFamily: "Quicksand", textAlign: "center", fontSize: "15px" }}>
+                                            {country.todayDeaths}
+                                        </TableCell>
+                                        <TableCell style={{ color: "#32CD32", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.todayRecovered}
+                                        </TableCell>
                                         <TableCell>
                                             <DeleteButton selectedCountryId={country.id} callBack={deleteCountryCallBack} />
                                         </TableCell>
@@ -86,9 +103,15 @@ const Admin = (props) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
+            </Slide>
+            <Slide left>
                 <h1 className='table-title mt-5'>
                     Continents
                 </h1>
+            </Slide>
+
+            <Slide left>
+                {/* saved continents COVID-19 data   */}
                 <TableContainer component={Paper} style={{ marginTop: "50px", b: 1, borderRadius: "20px" }}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table" >
                         <caption>COVID-19 data for all continents saved in the database </caption>
@@ -107,6 +130,7 @@ const Admin = (props) => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
+
                             {data ?
                                 data.getContinents.map((continent) => (
                                     <TableRow
@@ -115,13 +139,27 @@ const Admin = (props) => {
                                     >
                                         <TableCell style={{ color: "#21ABAB", fontWeight: "bold", fontSize: "18px" }}>{continent.name}</TableCell>
                                         <TableCell style={{ textAlign: "center" }}>{continent.population}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{continent.cases}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{continent.deaths}</TableCell>
-                                        <TableCell style={{ color: "#32CD32", textAlign: "center" }}>{continent.recovered}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{continent.active}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{continent.todayCases}</TableCell>
-                                        <TableCell style={{ color: "red", textAlign: "center" }}>{continent.todayDeaths}</TableCell>
-                                        <TableCell style={{ color: "#32CD32", textAlign: "center" }}>{continent.todayRecovered}</TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.cases}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.deaths}
+                                        </TableCell>
+                                        <TableCell style={{ color: "#32CD32", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.recovered}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.active}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.todayCases}
+                                        </TableCell>
+                                        <TableCell style={{ color: "red", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.todayDeaths}
+                                        </TableCell>
+                                        <TableCell style={{ color: "#32CD32", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.todayRecovered}
+                                        </TableCell>
                                         <TableCell>
                                             <DeleteButton selectedContinentId={continent.id} callBack={deleteCountryCallBack} />
 
@@ -131,43 +169,13 @@ const Admin = (props) => {
                         </TableBody>
                     </Table>
                 </TableContainer>
-            </Container >
-        </Grow>
+            </Slide>
+        </Container >
     ) : (
         <Home />
     )
     return adminPage;
 }
-
-const GET_COUNTRIES_CONTINENTS = gql`
-    query {
-        getCountries {
-            id
-            name
-            cases
-            todayCases
-            todayDeaths
-            deaths
-            population
-            continent
-            active
-            recovered
-            todayRecovered
-        }
-        getContinents {
-            id
-            name
-            cases
-            todayCases
-            todayDeaths
-            deaths
-            population
-            active
-            recovered
-            todayRecovered
-        }
-    }
-`;
 
 
 

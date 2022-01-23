@@ -1,5 +1,5 @@
 import React from 'react';
-import gql from 'graphql-tag';
+import { GET_CONTINENTS, GET_COUNTRIES, DELETE_COTINENT_MUTATION, DELETE_COUNTRY_MUTATION } from '../util/graphql'
 import { useMutation } from '@apollo/react-hooks';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
@@ -12,6 +12,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Draggable from 'react-draggable';
+import { makeStyles } from '@material-ui/core/styles';
 
 function PaperComponent(props) {
     return (
@@ -23,7 +24,19 @@ function PaperComponent(props) {
         </Draggable>
     );
 }
-
+const useStyles = makeStyles({
+    flexGrow: {
+        flex: '1',
+    },
+    button: {
+        backgroundColor: '#21ABAB',
+        color: '#fff',
+        '&:hover': {
+            backgroundColor: '#fff',
+            color: '#21ABAB',
+        },
+    }
+})
 
 function DeleteButton({ selectedCountryId, selectedContinentId, callBack }) {
     const [open, setOpen] = React.useState(false);
@@ -80,6 +93,8 @@ function DeleteButton({ selectedCountryId, selectedContinentId, callBack }) {
         }
     })
 
+    const classes = useStyles()
+
     return (
         <>
             <Tooltip title="Delete">
@@ -99,14 +114,14 @@ function DeleteButton({ selectedCountryId, selectedContinentId, callBack }) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Are you sure that you want to delete this data ?  
+                        Are you sure that you want to delete this data ?
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
+                    <Button  className={classes.button} autoFocus onClick={handleClose} size='small'>
                         Cancel
                     </Button>
-                    <Button onClick={
+                    <Button className={classes.button} size='small' onClick={
                         () => {
                             selectedCountryId ? deleteCountry() : deleteContinent()
                         }}>Delete</Button>
@@ -115,51 +130,6 @@ function DeleteButton({ selectedCountryId, selectedContinentId, callBack }) {
         </>
     );
 }
-
-const DELETE_COUNTRY_MUTATION = gql`
-            mutation($countryId: ID!) {
-                deleteCountry(countryID: $countryId)
-    }
-            `
-const DELETE_COTINENT_MUTATION = gql`
-            mutation($continentId: ID!) {
-                deleteContinent(continentID: $continentId)
-    }
-            `
-
-const GET_COUNTRIES = gql`
-            query getCountries{
-                getCountries {
-                id
-            name
-            cases
-            todayCases
-            todayDeaths
-            deaths
-            population
-            continent
-            active
-            recovered
-            todayRecovered
-        }
-    }
-            `;
-const GET_CONTINENTS = gql`
-            query getContinents{
-                getContinents {
-                id
-            name
-            cases
-            todayCases
-            todayDeaths
-            deaths
-            population
-            active
-            recovered
-            todayRecovered
-        }
-    }
-            `;
 
 export default DeleteButton;
 

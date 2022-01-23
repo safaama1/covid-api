@@ -1,34 +1,55 @@
 import React, { useState, useMemo, useContext, useEffect } from 'react';
+import { useMutation } from '@apollo/react-hooks';
+
+// bootstrap
 import { Container, Row, Col } from 'react-bootstrap';
+import Image from 'react-bootstrap/Image'
+
+/// mui material
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import countryList from 'react-select-country-list'
-import { AuthContext } from '../context/auth';
-import { useMutation } from '@apollo/react-hooks';
-import gql from 'graphql-tag'
-import Home from './Home';
 import FormGroup from '@mui/material/FormGroup';
 import { makeStyles } from "@material-ui/core";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
-import Image from 'react-bootstrap/Image'
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Zoom from '@mui/material/Zoom';
-import Button from '@mui/material/Button';
-import Grow from '@mui/material/Grow';
-import AddIcon from '@mui/icons-material/Add';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Fab from '@mui/material/Fab';
+import { green } from '@mui/material/colors';
+import Box from '@mui/material/Box';
+import Tooltip2 from '@mui/material/Tooltip';
+import Grow from '@mui/material/Grow';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CheckIcon from '@mui/icons-material/Check';
+import SaveIcon from '@mui/icons-material/Save';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import countryList from 'react-select-country-list' // list of all countries in the world
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet' // global map 
+// charts
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from 'react-chartjs-2';
+//slide animation
+import Slide from 'react-reveal/Slide';
+
+import { AuthContext } from '../context/auth';
+import Home from './Home';
+import { CREATE_COUNTRY_MUTATION } from '../util/graphql';
+// css
 import '../css/Profile.css'
 import '../css/Country.css'
 import '../css/Home.css'
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-
+/* styles */
+const style = {
+    margin: 5,
+    top: 'auto',
+    right: 20,
+    bottom: 20,
+    left: 'auto',
+    position: 'fixed',
+};
 const useStyles = makeStyles((theme) => ({
     formGroup: {
         alignItems: 'center'
@@ -82,6 +103,7 @@ function Country(props) {
         todayRecovered: 0
     })
 
+    /* mutation call to add country to the database */
     const [addCountry, { errors }] = useMutation(CREATE_COUNTRY_MUTATION, {
         variables: values,
         update(_, result) {
@@ -94,6 +116,8 @@ function Country(props) {
         }
     })
 
+    /* API call to get the COVID-19 data about the specific country 
+       API wbsite : https://disease.sh/docs/#/   */
     async function getData(country) {
         setLoading(false)
         setCantOpen(false)
@@ -117,18 +141,18 @@ function Country(props) {
                     recovered: country_obj.recovered,
                     todayRecovered: country_obj.todayRecovered
                 })
-
             } else {
                 setError(true)
             }
         } catch (error) {
-
         }
         setSlidePage(true);
     }
 
+    /* sleep function (used to make the animation a bit slower ) */
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    /* ocClick function for the button that adds the country to the database  */
     const onClick = async (event) => {
         event.preventDefault()
         setLoading(true)
@@ -137,6 +161,8 @@ function Country(props) {
         setLoading(false)
     }
 
+    /* style for the alert that shows if the contry has been added successfully to the database 
+       or not  */
     const Alert = React.forwardRef(function Alert(props, ref) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
@@ -152,14 +178,33 @@ function Country(props) {
         setCantOpen(false);
     };
 
+    /* button style (to overide the react mui button style )  */
+    const buttonSx = {
+        ...(successful ? {
+            bgcolor: green[500],
+            color: "#fff",
+            '&:hover': {
+                bgcolor: green[700],
+                color: "#fff"
+            },
+        } : {
+            bgcolor: "#21ABAB",
+            color: '#fff',
+            '&:hover': {
+                bgcolor: '#fff',
+                color: '#21ABAB'
+            }
+        }),
+    };
+
     useEffect(() => {
         setZoom(true)
         setCountryShowList(true)
     }, [])
 
+    // check if the user is logged in and if so show the profile page 
     const page = user ? (
         <Container className='mt-5'>
-
             <Row className='mt-5' >
                 <Col className='mt-5'>
                     <Zoom in={countryShowList}>
@@ -180,7 +225,6 @@ function Country(props) {
                                         try {
                                             await getData(newValue.label.toLowerCase());
                                         } catch (err) {
-
                                         }
                                     }}
                                     inputValue={inputValue}
@@ -196,14 +240,11 @@ function Country(props) {
                         </div>
                     </Zoom>
                     <div className='mt-5'>
-
-
                     </div>
-
                 </Col>
             </Row>
+            {/* if the country has been found and there is no error, then show the info about this country  */}
             {currCountry && error === false ? (
-
                 <Container>
                     <Grow
                         in={slidePage}
@@ -248,6 +289,7 @@ function Country(props) {
                             </Col>
                         </Row>
                     </Grow>
+
                     <Grow
                         in={slidePage}
                         style={{ transformOrigin: '0 0 0' }}
@@ -290,177 +332,205 @@ function Country(props) {
                             </Col>
                         </Row>
                     </Grow>
+                    <Slide left>
+                        <Row className='info-card shadow mt-5'>
+                            <Col className='mt-5 ' xs={12} md={3}>
+                                <h2 className='total-title mt-5'>
+                                    Today Stats:
+                                </h2>
+                            </Col>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={3}>
+                                <div>
+                                    <h2 className='country-info mt-4'>
+                                        Cases
+                                        <br />
+                                    </h2>
+                                    <h4 className='total-deaths mt-4'>
 
-                    <Row className='info-card shadow mt-5'>
-                        <Col className='mt-5 ' xs={12} md={3}>
-                            <h2 className='total-title mt-5'>
-                                Today Stats:
-                            </h2>
-                        </Col>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={3}>
-                            <div>
+                                        {currCountry.todayCases}
+                                    </h4>
+                                </div>
+                            </Col>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={3}>
                                 <h2 className='country-info mt-4'>
-                                    Cases
+                                    Recovered
                                     <br />
                                 </h2>
-                                <h4 className='total-deaths mt-4'>
-
-                                    {currCountry.todayCases}
+                                <h4 className="total-recovered mt-4">
+                                    {currCountry.todayRecovered}
                                 </h4>
-                            </div>
-                        </Col>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={3}>
-                            <h2 className='country-info mt-4'>
-                                Recovered
-                                <br />
-                            </h2>
-                            <h4 className="total-recovered mt-4">
-                                {currCountry.todayRecovered}
-                            </h4>
-                        </Col>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={3}>
-                            <h2 className='country-info mt-4'>
-                                Deaths
-                                <br />
-                            </h2>
-                            <h4 className="total-deaths mt-4">
-                                {currCountry.todayDeaths}
-                            </h4>
-                        </Col>
-                    </Row>
-                    <Row className='info-card shadow mt-5'>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={4}>
-                            <h2 className='country-info mt-4'>
-                                Tests
-                                <br />
-                            </h2>
-                            <h4 className="total-recovered mt-4">
-                                {currCountry.tests}
-                            </h4>
-                        </Col>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={4}>
-                            <h2 className='country-info mt-4'>
-                                Critical
-                                <br />
-                            </h2>
-                            <h4 className="total-deaths mt-4">
-                                {currCountry.critical}
-                            </h4>
-                        </Col>
-                        <Col className=' mt-5 mb-5 ' xs={12} md={4}>
-                            <h2 className='country-info mt-4'>
-                                Active
-                                <br />
-                            </h2>
-                            <h4 className="total-deaths mt-4">
-                                {currCountry.active}
-                            </h4>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col className='mt-5 mb-5' xs={12} md={6}>
-                            <div>
-                                <Doughnut data={{
-                                    labels: ['Today Cases', 'Today Recovered', 'Today Deaths'],
-                                    datasets: [
-                                        {
-                                            label: 'Today Cases',
-                                            data: [currCountry.todayCases, currCountry.todayRecovered, currCountry.todayDeaths],
-                                            backgroundColor: [
-                                                'rgb(255, 205, 86)',
-                                                'rgb(54, 162, 235)',
-                                                'rgb(255, 99, 132)'
-                                            ],
-                                            hoverOffset: 4
-                                        },
-                                    ],
-                                }}
-                                    width={500}
-                                    height={500
-                                    }
-                                    options={{ maintainAspectRatio: false }} />
-
-                            </div>
-                        </Col>
-                        <Col className='mt-5' xs={12} md={6}>
-                            
-                            <div>
-                                <Doughnut data={{
-                                    labels: ['Active', 'Total Recovered', 'Total Deaths'],
-                                    datasets: [
-                                        {
-                                            label: 'Total',
-                                            data: [currCountry.active, currCountry.recovered, currCountry.deaths],
-                                            backgroundColor: [
-                                                'rgb(255, 205, 86)',
-                                                'rgb(54, 162, 235)',
-                                                'rgb(255, 99, 132)'
-                                            ],
-                                            hoverOffset: 4
-                                        },
-                                    ],
-                                }}
-                                    width={500}
-                                    height={500
-                                    }
-                                    options={{ maintainAspectRatio: false }} />
-
-                            </div>
-                        </Col>
-                    </Row>
-                    <Row className='info-card shadow mt-5'>
-                        <Col>
-                            <h1 className='total-header mt-3 mb-3'>
-                                {currCountry.country}'s Location <LocationOnIcon style={{ marginTop: -12, fontSize: 45, color: "#21ABAB" }} />
-                            </h1>
-                            <MapContainer
-                                center={[currCountry.countryInfo.lat, currCountry.countryInfo.long]}
-                                zoom={6}
-                                style={{ height: '80vh', width: '80wh' }}
-                                scrollWheelZoom={false}>
-                                <TileLayer
-                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                />
-                                <Marker position={[currCountry.countryInfo.lat, currCountry.countryInfo.long]}>
-                                    <Popup>
-                                        {currCountry.country}
-                                    </Popup>
-                                </Marker>
-                                <ChangeMapView coords={[currCountry.countryInfo.lat, currCountry.countryInfo.long]} />
-                            </MapContainer>
-                        </Col>
-                    </Row>
+                            </Col>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={3}>
+                                <h2 className='country-info mt-4'>
+                                    Deaths
+                                    <br />
+                                </h2>
+                                <h4 className="total-deaths mt-4">
+                                    {currCountry.todayDeaths}
+                                </h4>
+                            </Col>
+                        </Row>
+                    </Slide>
+                    <Slide left>
+                        <Row className='info-card shadow mt-5'>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={4}>
+                                <h2 className='country-info mt-4'>
+                                    Tests
+                                    <br />
+                                </h2>
+                                <h4 className="total-recovered mt-4">
+                                    {currCountry.tests}
+                                </h4>
+                            </Col>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={4}>
+                                <h2 className='country-info mt-4'>
+                                    Critical
+                                    <br />
+                                </h2>
+                                <h4 className="total-deaths mt-4">
+                                    {currCountry.critical}
+                                </h4>
+                            </Col>
+                            <Col className=' mt-5 mb-5 ' xs={12} md={4}>
+                                <h2 className='country-info mt-4'>
+                                    Active
+                                    <br />
+                                </h2>
+                                <h4 className="total-deaths mt-4">
+                                    {currCountry.active}
+                                </h4>
+                            </Col>
+                        </Row>
+                    </Slide>
+                    <Slide left>
+                        <Row>
+                            <Col className='mt-5 mb-5' xs={12} md={6}>
+                                <div>
+                                    <Doughnut data={{
+                                        labels: ['Today Cases', 'Today Recovered', 'Today Deaths'],
+                                        datasets: [
+                                            {
+                                                label: 'Today Cases',
+                                                data: [currCountry.todayCases, currCountry.todayRecovered, currCountry.todayDeaths],
+                                                backgroundColor: [
+                                                    'rgb(255, 205, 86)',
+                                                    'rgb(54, 162, 235)',
+                                                    'rgb(255, 99, 132)'
+                                                ],
+                                                hoverOffset: 4
+                                            },
+                                        ],
+                                    }}
+                                        width={500}
+                                        height={500
+                                        }
+                                        options={{ maintainAspectRatio: false }} />
+                                </div>
+                            </Col>
+                            <Col className='mt-5' xs={12} md={6}>
+                                <div>
+                                    <Doughnut data={{
+                                        labels: ['Active', 'Total Recovered', 'Total Deaths'],
+                                        datasets: [
+                                            {
+                                                label: 'Total',
+                                                data: [currCountry.active, currCountry.recovered, currCountry.deaths],
+                                                backgroundColor: [
+                                                    'rgb(255, 205, 86)',
+                                                    'rgb(54, 162, 235)',
+                                                    'rgb(255, 99, 132)'
+                                                ],
+                                                hoverOffset: 4
+                                            },
+                                        ],
+                                    }}
+                                        width={500}
+                                        height={500
+                                        }
+                                        options={{ maintainAspectRatio: false }} />
+                                </div>
+                            </Col>
+                        </Row>
+                    </Slide>
+                    <Slide left>
+                        <Row className='info-card shadow mt-5'>
+                            <Col>
+                                <h1 className='total-header mt-3 mb-3'>
+                                    {currCountry.country}'s Location <LocationOnIcon style={{ marginTop: -12, fontSize: 45, color: "#21ABAB" }} />
+                                </h1>
+                                <MapContainer
+                                    center={[currCountry.countryInfo.lat, currCountry.countryInfo.long]}
+                                    zoom={6}
+                                    style={{ height: '80vh', width: '80wh' }}
+                                    scrollWheelZoom={false}>
+                                    <TileLayer
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    />
+                                    <Marker position={[currCountry.countryInfo.lat, currCountry.countryInfo.long]}>
+                                        <Popup>
+                                            {currCountry.country}
+                                        </Popup>
+                                    </Marker>
+                                    <ChangeMapView coords={[currCountry.countryInfo.lat, currCountry.countryInfo.long]} />
+                                </MapContainer>
+                            </Col>
+                        </Row>
+                    </Slide>
                     <Row className='mt-5 content'>
                         <Zoom in={zoom}>
                             <div className='mb-5'>
                                 {/* button to add country to the database */}
-                                <Button className={classes.button}
-                                    color='success'
-                                    variant="contained"
-                                    size="large"
-                                    endIcon={<AddIcon />}
-                                    onClick={onClick}>
-                                    Add Country&nbsp;&nbsp;{loading ? <CircularProgress size={20} /> : ''}
-                                </Button>
+                                <Box sx={{ m: 1, position: 'relative' }}>
+                                    <Tooltip2 title="Save Country">
+                                        <Fab style={style} onClick={onClick}
+                                            sx={buttonSx}
+                                            aria-label="add"
+                                            size="large"
+                                        >
+                                            {successful ? (
+                                                <CheckIcon />
+                                            ) : (
+                                                <SaveIcon />
+                                            )}
+                                        </Fab>
+                                    </Tooltip2>
+                                    {loading && (
+                                        <CircularProgress
+                                            size={68}
+                                            sx={{
+                                                color: green[500],
+                                                position: 'fixed',
+                                                bottom: 19,
+                                                right: 19,
+                                                zIndex: 200,
+                                            }}
+                                        />
+
+                                    )}
+                                </Box>
                                 <div className='content mt-3'>
-                                    {successful ? (<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                                        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                                            The Country {currCountry.country} has been added successfully !
-                                        </Alert>
-                                    </Snackbar>) : ''}
-                                    {cantOpen ? (<Snackbar open={cantOpen} autoHideDuration={6000} onClose={handleClose}>
-                                        <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                                            {currCountry.country} has already been added!
-                                        </Alert>
-                                    </Snackbar>) : ''}
+                                    {successful ? (
+                                        <Snackbar open={open} autoHideDuration={6000}
+                                            onClose={handleClose}
+                                            anchorOrigin={{ horizontal: 'center', vertical: 'top' }}>
+                                            <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                                                The Country {currCountry.country} has been added successfully !
+                                            </Alert>
+                                        </Snackbar>) : ''}
+                                    {cantOpen ? (
+                                        <Snackbar open={cantOpen} autoHideDuration={6000}
+                                            onClose={handleClose}
+                                            anchorOrigin={{ horizontal: 'center', vertical: 'top' }}>
+                                            <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+                                                {currCountry.country} has already been added!
+                                            </Alert>
+                                        </Snackbar>) : ''}
                                 </div>
                             </div>
                         </Zoom>
                     </Row>
                 </Container>
-
-
             ) :
                 <div >
                 </div>
@@ -483,44 +553,5 @@ function Country(props) {
         <Home />;
     return page
 }
-
-const CREATE_COUNTRY_MUTATION = gql`
-    mutation addCountry(
-        $name: String!
-        $cases: Int!
-        $todayCases: Int!
-        $todayDeaths: Int!
-        $deaths: Int!
-        $population: Int!
-        $continent: String!
-        $active: Int!
-        $recovered: Int!
-        $todayRecovered: Int!
-    ){
-        addCountry(country: {
-            name: $name
-            cases: $cases
-            todayCases: $todayCases
-            todayDeaths: $todayDeaths
-            deaths: $deaths
-            population: $population 
-            continent: $continent
-            active: $active
-            recovered: $recovered
-            todayRecovered: $todayRecovered
-        }){
-            id
-            name
-            todayCases
-            todayDeaths
-            deaths
-            population
-            continent
-            active
-            recovered
-            todayRecovered
-        }
-    }
-`
 
 export default Country;

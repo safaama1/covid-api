@@ -1,4 +1,3 @@
-import ReactDOM from 'react-dom';
 import WorldMap from 'react-world-map'
 import '../css/ContinentMap.css'
 function ContinentMap({ continent }) {
