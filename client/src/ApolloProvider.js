@@ -5,6 +5,7 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createHttpLink } from 'apollo-link-http';
 import { ApolloProvider } from '@apollo/react-hooks';
 
+//connect to server side
 const httpLink = createHttpLink({
     uri: 'http://localhost:5000/'
 })

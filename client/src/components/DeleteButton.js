@@ -14,6 +14,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Draggable from 'react-draggable';
 import { makeStyles } from '@material-ui/core/styles';
 
+// small window to show confirmation massage before delteing the data
 function PaperComponent(props) {
     return (
         <Draggable
@@ -24,6 +25,8 @@ function PaperComponent(props) {
         </Draggable>
     );
 }
+
+// button style
 const useStyles = makeStyles({
     flexGrow: {
         flex: '1',
@@ -38,6 +41,8 @@ const useStyles = makeStyles({
     }
 })
 
+
+// button to delete country or continent in the admin page  
 function DeleteButton({ selectedCountryId, selectedContinentId, callBack }) {
     const [open, setOpen] = React.useState(false);
 
@@ -63,7 +68,7 @@ function DeleteButton({ selectedCountryId, selectedContinentId, callBack }) {
                 })
             }
             if (callBack) {
-                callBack()
+                callBack() //callBack =>  refresh page after deleting the country  
             }
         },
         onError(err) {

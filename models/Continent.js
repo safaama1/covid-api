@@ -9,6 +9,7 @@ const continentSchema = new mongoose.Schema({
     population: Number,
     active: Number,
     recovered: Number,
-    todayRecovered: Number
+    todayRecovered: Number,
+    createdAt: String
 });
 module.exports = mongoose.model('Continent', continentSchema)

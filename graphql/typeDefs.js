@@ -13,6 +13,7 @@ module.exports = gql`
     active: Int!
     recovered: Int!
     todayRecovered: Int!
+    createdAt: String!
   }
   type Continent {
     id: ID!
@@ -25,6 +26,7 @@ module.exports = gql`
     active: Int!
     recovered: Int!
     todayRecovered: Int!
+    createdAt: String!
   }
   type User {
     id: ID!

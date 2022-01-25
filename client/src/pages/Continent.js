@@ -28,7 +28,7 @@ import { CREATE_CONTINENT_MUTATION } from '../util/graphql';
 
 //slide animation
 import Slide from 'react-reveal/Slide';
-
+// css
 import '../css/Profile.css'
 import '../css/Country.css'
 import '../css/Home.css'
@@ -79,6 +79,7 @@ function Continent(props) {
     const [successful, setSuccessful] = useState(false)
     const [loading, setLoading] = useState(false)
     const [countryShowList, setCountryShowList] = useState(false)
+    const [loadingContinent, setLoadingContinent] = useState(false)
 
     // the continents names 
     const options = ['Asia', 'Africa', 'Europe', 'North America', 'South America', 'Australia']
@@ -90,12 +91,15 @@ function Continent(props) {
         setCantOpen(false)
         setOpen(false)
         setSuccessful(false)
+        setLoadingContinent(false)
         try {
+            setLoadingContinent(true)
             const response = await fetch(`https://disease.sh/v3/covid-19/continents/${continent}?yesterday=true&strict=true`)
             if (response.ok) {
                 setError(false)
                 const continent_obj = await response.json()
                 setCurrContinent(continent_obj)
+                // save the data 
                 setValues({
                     name: continent_obj.continent,
                     cases: continent_obj.cases,
@@ -130,12 +134,14 @@ function Continent(props) {
                     default:
                         return '';
                 }
+                setLoadingContinent(false)
             } else {
                 setError(true)
             }
         } catch (error) {
 
         }
+        setLoadingContinent(false)
         setSlidePage(true);
     }
     // the props of the continent
@@ -152,15 +158,15 @@ function Continent(props) {
     })
     const [open, setOpen] = useState(false);
     const [cantOpen, setCantOpen] = useState(false);
-    const [addContinent, { errors }] = useMutation(CREATE_CONTINENT_MUTATION, {
+
+    // get the addContinent mutation 
+    const [addContinent] = useMutation(CREATE_CONTINENT_MUTATION, {
         variables: values,
         update(_, result) {
-            console.log(result)
             setSuccessful(true)
             setOpen(true);
         },
         onError(err) {
-            console.log(errors)
             setCantOpen(true)
         }
     })
@@ -173,6 +179,7 @@ function Continent(props) {
     };
 
 
+    /* floating action button style (to overide the react mui button style )  */
     const buttonSx = {
         ...(successful ? {
             bgcolor: green[500],
@@ -192,17 +199,23 @@ function Continent(props) {
     };
 
 
+    // style of the alert that shows success or fail of adding continent to database     
     const Alert = React.forwardRef(function Alert(props, ref) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
+
+    // API call to get the continents' countries 
+    // and show their flags 
     async function getCountries() {
         const response2 = await fetch('https://disease.sh/v3/covid-19/countries')
         const countries_obj = await response2.json()
         setAllCountries(countries_obj)
     }
 
+    // sleep function to make the animations a bit slower 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
+    // listener for the "save to data base" button 
     const onClick = async (event) => {
         setLoading(true)
         await delay(2000);
@@ -211,6 +224,7 @@ function Continent(props) {
         setLoading(false)
     }
     useEffect(() => {
+        // get all the countries at start to minimize the number of calls every time we change continent
         getCountries()
         setCountryShowList(true)
         setZoom(true)
@@ -218,7 +232,7 @@ function Continent(props) {
 
     const page = user ? (
         <Container className='mt-5'>
-
+            {/* the dropdown menu of continents */}
             <Row className='mt-5' >
                 <Col className='mt-5'>
                     <Zoom in={countryShowList}>
@@ -227,7 +241,6 @@ function Continent(props) {
                         </h2>
                     </Zoom>
                     <Zoom in={countryShowList} style={{ transitionDelay: countryShowList ? '500ms' : '0ms' }}>
-
                         <div className='mt-4'>
                             <FormGroup className={classes.formGroup} noValidate autoComplete="on">
                                 <Autocomplete
@@ -261,8 +274,14 @@ function Continent(props) {
 
                 </Col>
             </Row>
+            {loadingContinent ? (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress style={{ color: '#21ABAB' }} />
+                </div>
+            ) : ''}
+            {/* if the chosen continent has valid data then show it 
+            and there is no error   */}
             {currContinent && error === false ? (
-
                 <Container>
                     <Grow
                         in={slidePage}
@@ -277,7 +296,7 @@ function Continent(props) {
                         style={{ transformOrigin: '0 0 0' }}
                         {...(slidePage ? { timeout: 2000 } : {})}   >
                         <Row className='info-card shadow mt-5 mb-5 '>
-                            {/* continent card  */}
+                            {/* continent info  */}
                             <Col className=' mt-5 mb-5 ' xs={12} md={4}>
                                 <div>
                                     <h2 className='country-info mt-4'>
@@ -305,7 +324,6 @@ function Continent(props) {
                                     <br />
                                 </h2>
                                 <h4 className='total-deaths mt-4'>
-
                                     {currContinent.active}
                                 </h4>
                             </Col>
@@ -315,6 +333,7 @@ function Continent(props) {
                         in={slidePage}
                         style={{ transformOrigin: '0 0 0' }}
                         {...(slidePage ? { timeout: 2000 } : {})}   >
+                        {/* continent COVID-19 info  */}
                         <Row className='info-card shadow mt-5'>
                             <Col className='mt-5 ' xs={12} md={3}>
                                 <h2 className='total-title mt-5'>
@@ -415,6 +434,7 @@ function Continent(props) {
                         </Row>
                     </Slide>
                     <Slide left>
+
                         <Row>
                             <Col className='mt-5 mb-5' xs={12} md={6}>
                                 <h1 className='total-header mb-3 '>
@@ -480,10 +500,12 @@ function Continent(props) {
                         </Row>
                     </Slide>
                     <Slide left>
+                        {/* image list of all the countries and their flag in this continent */}
                         <Row className='mt-5 justify-content-center align-self-center'>
                             <ImageList sx={{ width: 700, height: 450 }} cols={3} className='info-card shadow'>
                                 {
                                     allCountries.filter((country) => {
+                                        // if the countries' continent equals the current continent then show its flag
                                         return country.continent === currContinent.continent
                                     }).map((country) => {
                                         return (
@@ -506,14 +528,14 @@ function Continent(props) {
                     <Row className='mt-5 content'>
                         <Zoom in={zoom}>
                             <div className='mb-5'>
-                                {/* button to add country to the database */}
+                                {/* flaot action button to add continent to the database */}
                                 <Box sx={{ m: 1, position: 'relative' }}>
                                     <Tooltip2 title="Save Continent">
                                         <Fab style={style} onClick={onClick} sx={buttonSx} color="primary" aria-label="add">
                                             {successful ? <CheckIcon /> : <SaveIcon />}
                                         </Fab>
                                     </Tooltip2>
-
+                                    {/* show loading animation */}
                                     {loading && (
                                         <CircularProgress
                                             size={68}
@@ -527,6 +549,7 @@ function Continent(props) {
                                         />
                                     )}
                                 </Box>
+                                {/* alerts for the result of adding to the database */}
                                 <div className='content mt-3'>
                                     {successful ? (<Snackbar open={open} autoHideDuration={6000} onClose={handleClose}
                                         anchorOrigin={{ horizontal: 'center', vertical: 'top' }}>
@@ -537,7 +560,7 @@ function Continent(props) {
                                     {cantOpen ? (<Snackbar open={cantOpen} autoHideDuration={6000} onClose={handleClose}
                                         anchorOrigin={{ horizontal: 'center', vertical: 'top' }}>
                                         <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                                            {currContinent.continent} has already been added!
+                                            {currContinent.continent} can't be added, try again !
                                         </Alert>
                                     </Snackbar>) : ''}
                                 </div>

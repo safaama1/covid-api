@@ -28,13 +28,14 @@ function Login() {
     const onChange = (event) => {
         setValues({ ...values, [event.target.name]: event.target.value })
     }
+    // get LOGIN_USER mutation 
     const [loginUser, { loading }] = useMutation(LOGIN_USER, {
         update(_, result) {
-            console.log(result.data.login)
-            context.login(result.data.login)
-            navigate('/')
+            context.login(result.data.login) // set the user that AuthProvider will pass
+            navigate('/') // go to the profile page after success 
         },
         onError(err) {
+            // if there is errors then show them under the form
             setOpen(false);
             setErrors(err.graphQLErrors[0].extensions.errors)
         }
@@ -43,7 +44,7 @@ function Login() {
     const onSubmit = (event) => {
         setOpen(true);
         event.preventDefault()
-        loginUser()
+        loginUser() // login user after submiting 
     }
     useEffect(() => {
         setSlidePage(true)

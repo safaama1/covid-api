@@ -36,13 +36,12 @@ function Register(props) {
     }
     const [addUser, { loading }] = useMutation(REGISTER_USER, {
         update(_, { data: { register: userData } }) {
-            console.log(userData)
-            context.login(userData)
+            context.login(userData) // check if input valid 
             navigate('/')
         },
         onError(err) {
+            // if there is errors then show them under the form
             setOpen(false)
-            console.log(err.graphQLErrors[0].extensions.errors)
             setErrors(err.graphQLErrors[0].extensions.errors)
         }
         , variables: values
