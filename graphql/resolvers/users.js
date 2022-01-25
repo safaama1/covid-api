@@ -23,6 +23,7 @@ function generateToken(user) {
             username: user.username,
             type: user.type
         },
+        // create a secret key (env variable)
         SECRET_KEY,
         { expiresIn: '1h' }
     );
@@ -93,6 +94,7 @@ module.exports = {
                     }
                 });
             }
+            // check if the password is weak and throw error if so 
             if (!strongRegex.test(password) && !mediumRegex.test(password)) {
                 throw new UserInputError('Password is weak!', {
                     errors: {
@@ -112,9 +114,7 @@ module.exports = {
             });
 
             const res = await newUser.save();
-
             const token = generateToken(res);
-
             return {
                 ...res._doc,
                 id: res._id,

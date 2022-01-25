@@ -35,7 +35,7 @@ function Profile(props) {
             },
         }
     })
-    const { user } = useContext(AuthContext)
+    const { user } = useContext(AuthContext) // get current user 
     const [zoom, setZoom] = useState(false)
     const [slidePage, setSlidePage] = useState(false)
     const [content, setContent] = useState("");

@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-// All the Root Types in the server side
+// All the mutations & queries calls exported 
 
 export const CREATE_COUNTRY_MUTATION = gql`
 mutation addCountry(
@@ -89,6 +89,7 @@ query {
         active
         recovered
         todayRecovered
+        createdAt
     }
     getContinents {
         id
@@ -101,6 +102,7 @@ query {
         active
         recovered
         todayRecovered
+        createdAt
     }
 }
 `;

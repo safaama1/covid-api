@@ -1,3 +1,4 @@
+// check if the user input is valid 
 module.exports.validateRegisterInput = (
     username,
     email,

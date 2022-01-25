@@ -9,6 +9,7 @@ const countrySchema = new Schema({
     continent: String,
     active: Number,
     recovered: Number,
-    todayRecovered: Number
+    todayRecovered: Number,
+    createdAt: String
 });
 module.exports = model('Country', countrySchema)

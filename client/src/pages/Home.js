@@ -43,9 +43,9 @@ const Home = () => {
     const getData = async () => {
         await delay(1000);
         setLoading(true)
-        const response = await fetch('https://disease.sh/v3/covid-19/all?yesterday=yesterday')
+        // get the worlds' COVID-19 info (total cases ,deaths ,recovered in the world)  
+        const response = await fetch('https://disease.sh/v3/covid-19/all?yesterday=true')
         const arr = await response.json()
-        console.log(arr)
         setTodayDeaths(arr.todayDeaths);
         setTodayCases(arr.todayCases);
         setRecovered(arr.recovered);
@@ -56,7 +56,7 @@ const Home = () => {
     const classes = useStyles()
 
     useEffect(() => {
-        getData()
+        getData() 
     }, [])
     const homePage = user ? <Profile /> : (
         <Container className='mt-5 pt-3' >
@@ -89,6 +89,7 @@ const Home = () => {
             </Slide>
 
             <Slide left>
+                {/* COVID-19 info */}
                 <Row className='shadow mt-5 mb-5' style={{ borderRadius: "20px" }}>
                     <Col className='mt-4 justify-content-center align-self-center' xs={6} md={3}>
                         <h2 className='cases-header'>
@@ -133,6 +134,7 @@ const Home = () => {
 
                 </Row>
             </Slide>
+            {/* helpfull youtube videos */}
             <Slide left>
                 <Row>
                     <Col className='mt-5 text-center' xs={12} md={12}>

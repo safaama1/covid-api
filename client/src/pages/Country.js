@@ -26,8 +26,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import countryList from 'react-select-country-list' // list of all countries in the world
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet' // global map 
 // charts
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, LineController, LineElement, PointElement, LinearScale, Title, CategoryScale } from 'chart.js';
+import { Doughnut, Line } from 'react-chartjs-2';
 //slide animation
 import Slide from 'react-reveal/Slide';
 
@@ -39,7 +39,8 @@ import '../css/Profile.css'
 import '../css/Country.css'
 import '../css/Home.css'
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, LineController, LineElement, PointElement, LinearScale, Title, CategoryScale);
+var data = null // data in the line chart 
 
 /* styles */
 const style = {
@@ -77,9 +78,8 @@ function ChangeMapView({ coords }) {
 }
 
 function Country(props) {
-
-    const { user } = useContext(AuthContext)
-    const options = useMemo(() => countryList().getData(), [])
+    const { user } = useContext(AuthContext) // get the current user
+    const options = useMemo(() => countryList().getData(), []) // get the list of all countries in the world
     const [zoom, setZoom] = useState(false)
     const classes = useStyles();
     const [currCountry, setCurrCountry] = useState(null)
@@ -89,7 +89,9 @@ function Country(props) {
     const [error, setError] = useState(false)
     const [successful, setSuccessful] = useState(false)
     const [loading, setLoading] = useState(false)
+    const [loadingCountry, setLoadingCountry] = useState(false)
     const [countryShowList, setCountryShowList] = useState(false)
+    // current country value
     const [values, setValues] = useState({
         name: '',
         cases: 0,
@@ -123,11 +125,14 @@ function Country(props) {
         setCantOpen(false)
         setOpen(false)
         setSuccessful(false)
+        setLoadingCountry(false)
         try {
-            const response = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=true&strict=true`)
-            if (response.ok) {
+            // get all the COVID-19 data about this country (total and yesterday)
+            setLoadingCountry(true)
+            const response1 = await fetch(`https://disease.sh/v3/covid-19/countries/${country}?yesterday=true&strict=true`)
+            if (response1.ok) {
                 setError(false)
-                const country_obj = await response.json()
+                const country_obj = await response1.json()
                 setCurrCountry(country_obj)
                 setValues({
                     name: country_obj.country,
@@ -144,8 +149,31 @@ function Country(props) {
             } else {
                 setError(true)
             }
+            // get cases , deaths and recovered COVID-19 data about this country in the last 30 days  
+            const response2 = await fetch(`https://disease.sh/v3/covid-19/historical/${country}?lastdays=30`)
+            if (response2.ok) {
+                setError(false)
+                const country_obj = await response2.json()
+                console.log(Object.keys(country_obj.timeline.cases));
+                data = {
+                    labels: Object.keys(country_obj.timeline.cases),
+                    datasets: [
+                        {
+                            label: "Cases",
+                            data: Object.values(country_obj.timeline.cases),
+                            fill: true,
+                            backgroundColor: "rgba(75,192,192,0.2)",
+                            borderColor: "rgba(75,192,192,1)"
+                        },
+                    ]
+                };
+            } else {
+                setError(true)
+            }
+            setLoadingCountry(false)
         } catch (error) {
         }
+        setLoadingCountry(false)
         setSlidePage(true);
     }
 
@@ -178,7 +206,7 @@ function Country(props) {
         setCantOpen(false);
     };
 
-    /* button style (to overide the react mui button style )  */
+    /* floating action button style (to overide the react mui button style )  */
     const buttonSx = {
         ...(successful ? {
             bgcolor: green[500],
@@ -200,11 +228,13 @@ function Country(props) {
     useEffect(() => {
         setZoom(true)
         setCountryShowList(true)
+        setLoadingCountry(false)
     }, [])
 
-    // check if the user is logged in and if so show the profile page 
+    // check if the user is logged in and if not go back to homepage 
     const page = user ? (
         <Container className='mt-5'>
+            {/* the dropdown menu of countries */}
             <Row className='mt-5' >
                 <Col className='mt-5'>
                     <Zoom in={countryShowList}>
@@ -243,6 +273,11 @@ function Country(props) {
                     </div>
                 </Col>
             </Row>
+            {loadingCountry ? (
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress style={{color:'#21ABAB'}} />
+                </div>
+            ) : ''}
             {/* if the country has been found and there is no error, then show the info about this country  */}
             {currCountry && error === false ? (
                 <Container>
@@ -406,25 +441,8 @@ function Country(props) {
                         <Row>
                             <Col className='mt-5 mb-5' xs={12} md={6}>
                                 <div>
-                                    <Doughnut data={{
-                                        labels: ['Today Cases', 'Today Recovered', 'Today Deaths'],
-                                        datasets: [
-                                            {
-                                                label: 'Today Cases',
-                                                data: [currCountry.todayCases, currCountry.todayRecovered, currCountry.todayDeaths],
-                                                backgroundColor: [
-                                                    'rgb(255, 205, 86)',
-                                                    'rgb(54, 162, 235)',
-                                                    'rgb(255, 99, 132)'
-                                                ],
-                                                hoverOffset: 4
-                                            },
-                                        ],
-                                    }}
-                                        width={500}
-                                        height={500
-                                        }
-                                        options={{ maintainAspectRatio: false }} />
+                                    {data ? (<Line data={data} height={"300rem"}
+                                    />) : ''}
                                 </div>
                             </Col>
                             <Col className='mt-5' xs={12} md={6}>
@@ -523,7 +541,7 @@ function Country(props) {
                                             onClose={handleClose}
                                             anchorOrigin={{ horizontal: 'center', vertical: 'top' }}>
                                             <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
-                                                {currCountry.country} has already been added!
+                                                {currCountry.country} cannot be added , try again!
                                             </Alert>
                                         </Snackbar>) : ''}
                                 </div>

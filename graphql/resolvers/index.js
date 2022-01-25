@@ -1,8 +1,7 @@
-// const postsResolvers = require('./posts');
 const usersResolvers = require('./users');
 const countryResolvers = require('./country');
 const continentResolvers = require('./continent')
-
+// get the queries and mutations from every resolver and export them 
 module.exports = {
     Query: {
         ...usersResolvers.Query,

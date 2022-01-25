@@ -19,6 +19,7 @@ const rounded = num => {
     }
 };
 
+// world map that show the population of the clicked or hovered country 
 const MapChart = ({ setTooltipContent }) => {
     return (
         <>

@@ -1,14 +1,11 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_COUNTRIES_CONTINENTS } from '../util/graphql'
-
 import { AuthContext } from '../context/auth';
 import Home from './Home';
 import DeleteButton from '../components/DeleteButton';
-
 import { Container } from 'react-bootstrap';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,7 +13,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-
 import Slide from 'react-reveal/Slide';
 
 const Admin = (props) => {
@@ -55,6 +51,7 @@ const Admin = (props) => {
                                 <TableCell style={{ color: "#21ABAB" }}>Today Cases</TableCell>
                                 <TableCell style={{ color: "#21ABAB" }}>Today Deaths</TableCell>
                                 <TableCell style={{ color: "#21ABAB" }}>Today Recovered</TableCell>
+                                <TableCell style={{ color: "#21ABAB", textAlign: 'center' }}>Date</TableCell>
                                 <TableCell ></TableCell>
                             </TableRow>
                         </TableHead>
@@ -95,6 +92,9 @@ const Admin = (props) => {
                                         <TableCell style={{ color: "#32CD32", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
                                             {country.todayRecovered}
                                         </TableCell>
+                                        <TableCell style={{ color: "#21ABAB", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {country.createdAt.slice(0, 10)}
+                                        </TableCell>
                                         <TableCell>
                                             <DeleteButton selectedCountryId={country.id} callBack={deleteCountryCallBack} />
                                         </TableCell>
@@ -126,6 +126,7 @@ const Admin = (props) => {
                                 <TableCell style={{ color: "#21ABAB" }}>Today Cases</TableCell>
                                 <TableCell style={{ color: "#21ABAB" }}>Today Deaths</TableCell>
                                 <TableCell style={{ color: "#21ABAB" }}>Today Recovered</TableCell>
+                                <TableCell style={{ color: "#21ABAB", textAlign: 'center' }}>Date</TableCell>
                                 <TableCell ></TableCell>
                             </TableRow>
                         </TableHead>
@@ -160,9 +161,11 @@ const Admin = (props) => {
                                         <TableCell style={{ color: "#32CD32", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
                                             {continent.todayRecovered}
                                         </TableCell>
+                                        <TableCell style={{ color: "#21ABAB", textAlign: "center", fontFamily: "Quicksand", fontSize: "15px" }}>
+                                            {continent.createdAt.slice(0, 10)}
+                                        </TableCell>
                                         <TableCell>
                                             <DeleteButton selectedContinentId={continent.id} callBack={deleteCountryCallBack} />
-
                                         </TableCell>
                                     </TableRow>
                                 )) : (<TableRow><TableCell></TableCell></TableRow>)}

@@ -6,13 +6,15 @@ const { UserInputError, AuthenticationError } = require('apollo-server');
 
 module.exports = {
     Query: {
+        // get continent by id
         async getContinent(_, { continentID }) {
             try {
+                // check if the continent is not saved in the database 
                 const continent = await Continent.findById(continentID);
                 if (continent) {
                     return continent
                 } else {
-                    throw new UserInputError('CounContinenttry not found', {
+                    throw new UserInputError('Continent not found', {
                         errors: {
                             name: 'Continent not found'
                         }
@@ -23,6 +25,7 @@ module.exports = {
             }
 
         }
+        // get all continents 
         , async getContinents() {
             try {
                 const continents = await Continent.find();
@@ -49,14 +52,10 @@ module.exports = {
                  }
             }
         ) {
-            const continent = await Continent.findOne({ name });
-            if (continent) {
-                throw new UserInputError('Continent is already added', {
-                    errors: {
-                        username: 'Continent is already added'
-                    }
-                });
-            }
+            /* I didn't add "check if data already exists" because
+            the data in the API is always changing (number of cases ,deaths .... )
+            so its logical that there is more than one continent with different data  */
+
             const newContinent = new Continent({
                 name,
                 cases,
@@ -66,7 +65,8 @@ module.exports = {
                 population,
                 active,
                 recovered,
-                todayRecovered
+                todayRecovered,
+                createdAt: new Date().toISOString()
             });
 
             const res = await newContinent.save();
@@ -74,6 +74,7 @@ module.exports = {
         },
         async deleteContinent(_, { continentID }, context) {
             try {
+                // check if the continent is saved in the database , if not so throw error 
                 const continent = await Continent.findById(continentID);
                 if (continent) {
                     await continent.delete();

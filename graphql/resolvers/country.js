@@ -1,13 +1,13 @@
-const bcrypt = require('bcryptjs');
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
 const Country = require('../../models/Country');
 const { UserInputError, AuthenticationError } = require('apollo-server');
 
 module.exports = {
     Query: {
+        // get country by id 
         async getCountry(_, { countryID }) {
             try {
+                // check if the country is not saved in the database 
                 const country = await Country.findById(countryID);
                 if (country) {
                     return country
@@ -50,14 +50,10 @@ module.exports = {
                 }
             }
         ) {
-            const country = await Country.findOne({ name });
-            if (country) {
-                throw new UserInputError('Country is already added', {
-                    errors: {
-                        username: 'Country is already added'
-                    }
-                });
-            }
+            /* I didn't add "check if data already exists" because
+           the data in the API is always changing (number of cases ,deaths .... ) 
+           so its logical that there is more than one country with different data */
+
             const newCountry = new Country({
                 name,
                 cases,
@@ -68,14 +64,17 @@ module.exports = {
                 continent,
                 active,
                 recovered,
-                todayRecovered
+                todayRecovered,
+                createdAt: new Date().toISOString()
             });
 
             const res = await newCountry.save();
             return res
         },
+        // delete country that have this id  
         async deleteCountry(_, { countryID }, context) {
             try {
+                // check if the country is saved in the database , if not so throw error 
                 const country = await Country.findById(countryID);
                 if (country) {
                     await country.delete();
