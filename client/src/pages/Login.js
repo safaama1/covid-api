@@ -29,7 +29,7 @@ function Login() {
         setValues({ ...values, [event.target.name]: event.target.value })
     }
     // get LOGIN_USER mutation 
-    const [loginUser, { loading }] = useMutation(LOGIN_USER, {
+    const [loginUser] = useMutation(LOGIN_USER, {
         update(_, result) {
             context.login(result.data.login) // set the user that AuthProvider will pass
             navigate('/') // go to the profile page after success 
@@ -55,7 +55,7 @@ function Login() {
                 <br />
                 <br />
                 <br />
-                <Row className='shadow-lg p-3 mb-5 bg-white' style={{ borderRadius: "30px" }}>
+                <Row className='shadow-lg p-3 mt-5 mb-5 bg-white' style={{ borderRadius: "30px" }}>
                     <Col className="mt-3" md={5} xs={12}>
                         <form onSubmit={onSubmit} noValidate>
                             <h3 className='text-center mb-4'>Log In</h3>
