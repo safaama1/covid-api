@@ -4,13 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
 import YoutubeEmbed from "../components/YoutubeEmbed";
 import YouTubeIcon from '@mui/icons-material/YouTube';
-import MasksIcon from '@mui/icons-material/Masks';
 import { AuthContext } from '../context/auth';
 import { makeStyles } from '@material-ui/core/styles';
 import StartIcon from '@mui/icons-material/Start';
-import Profile from './Profile';
 import Slide from 'react-reveal/Slide';
 
+import Profile from './Profile';
+import Prevention from '../components/Prevention';
+import Footer from '../components/Footer';
 import '../css/Home.css';
 
 
@@ -56,7 +57,8 @@ const Home = () => {
     const classes = useStyles()
 
     useEffect(() => {
-        getData() 
+        getData()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     const homePage = user ? <Profile /> : (
         <Container className='mt-5 pt-3' >
@@ -176,51 +178,12 @@ const Home = () => {
                 </Row>
             </Slide>
 
-            <Slide left>
+            {/* Prevention instructions */}
+            <Prevention />
 
-                <Row className='mt-5 justify-content-center'>
-                    <h1 className='title mt-5'>
-                        <MasksIcon style={{ fontSize: 70, color: '#21ABAB' }} />   Prevention
-                    </h1>
-                </Row>
-            </Slide>
-
-            <Slide left>
-
-                <Row className='mt-5 mb-5 cards'>
-                    <Col className='prev-card' xs={12} md={4} >
-                        <img className="card-image" src={process.env.PUBLIC_URL + '/images/undraw_medical_care_movn.svg'}
-                            alt='' />
-                        <h2 className='card-title'>
-                            Wear a mask
-                        </h2>
-                        <p className='card-info'>
-                            Masks can help prevent spread of the virus from the person wearing the mask to others.
-                        </p>
-                    </Col>
-                    <Col className='prev-card' xs={12} md={4} >
-                        <img className="card-image" src={process.env.PUBLIC_URL + '/images/undraw_wash_hands_nwl2.svg'}
-                            alt='' />
-                        <h2 className='card-title'>
-                            Wash your hands often
-                        </h2>
-                        <p className='card-info'>
-                            Clean your hands with soop and water, or alcohol-based hand sanitizer.
-                        </p>
-                    </Col>
-                    <Col className='prev-card' xs={12} md={4} >
-                        <img className="card-image" src={process.env.PUBLIC_URL + '/images/undraw_social_distancing_2g0u.svg'} alt='' />
-                        <h2 className='card-title'>
-                            Physical distancing
-                        </h2>
-                        <p className='card-info'>
-                            Maintain a safe distance especially from anyone who is coughinf or sneezing.
-                        </p>
-                    </Col>
-                </Row>
-            </Slide>
-
-        </Container>
+            {/* Footer */}
+            <Footer />
+        </Container >
     )
     return homePage;
 }

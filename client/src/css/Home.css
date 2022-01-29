@@ -61,17 +61,21 @@
     text-align: center;
 }
 
-.cards {
-    margin-top: 10px;
+
+
+.prev-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .prev-card {
     margin: 8px 8px 8px 8px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     border-radius: 40px;
+    width: 400px;
+    height: auto;
 }
 
 .card-title {
@@ -84,7 +88,7 @@
 }
 
 .card-info {
-    padding: 5px 5px 5px 5px;
+    padding: 5px 30px 0px 30px;
     margin-top: 10px;
     font-family: 'Quicksand', sans-serif;
     font-size: 20px;
@@ -97,4 +101,33 @@
     height: 18rem;
     margin-left: auto;
     margin-right: auto;
+}
+
+.footer {
+    padding: 10px;
+    border: 5px;
+    margin-top: 8rem;
+    margin-bottom: 0.5rem;
+    height: auto;
+    width: 100%;
+    background: #21abab81;
+    color: rgb(39, 39, 39);
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    font-size: larger;
+    text-decoration: none;
+    position: relative;
+    bottom: 0;
+    left: auto;
+    right: auto;
+    border-radius: 50px;
+}
+
+.footer-logo {
+    height: 30px;
+    width: 30px;
+    box-shadow: 0 0 10px #fff;
+    background-color: #fff;
+    border-radius: 20px;
+    margin-bottom: 0.3rem;
 }
