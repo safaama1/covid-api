@@ -78,7 +78,9 @@ module.exports = gql`
     login(username: String!, password: String!): User!
     addCountry(country: CountryInput!): Country!
     deleteCountry(countryID: ID!): String!
+    updateCountry(countryID: ID!, country: CountryInput!): Country!
     addContinent(continent: ContinentInput!): Continent!
+    updateContinent(continentID: ID!, continent: ContinentInput!): Continent!
     deleteContinent(continentID: ID!): String!
   }
 `;

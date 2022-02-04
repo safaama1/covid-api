@@ -438,7 +438,7 @@ function Continent(props) {
                         <Row>
                             <Col className='mt-5 mb-5' xs={12} md={6}>
                                 <h1 className='total-header mb-3 '>
-                                    Today Stats
+                                    Today Stats Chart
                                 </h1>
                                 <div>
                                     <Doughnut data={{
@@ -449,7 +449,7 @@ function Continent(props) {
                                                 data: [currContinent.todayCases, currContinent.todayRecovered, currContinent.todayDeaths],
                                                 backgroundColor: [
                                                     'rgb(255, 205, 86)',
-                                                    'rgb(54, 162, 235)',
+                                                    '#21ABAB',
                                                     'rgb(255, 99, 132)'
                                                 ],
                                                 hoverOffset: 4
@@ -465,7 +465,7 @@ function Continent(props) {
                             </Col>
                             <Col className='mt-5' xs={12} md={6}>
                                 <h1 className='total-header mb-3'>
-                                    Total Stats
+                                    Recovery Chart
                                 </h1>
                                 <div>
                                     <Doughnut data={{
@@ -476,7 +476,7 @@ function Continent(props) {
                                                 data: [currContinent.active, currContinent.recovered, currContinent.deaths],
                                                 backgroundColor: [
                                                     'rgb(255, 205, 86)',
-                                                    'rgb(54, 162, 235)',
+                                                    '#21ABAB',
                                                     'rgb(255, 99, 132)'
                                                 ],
                                                 hoverOffset: 4

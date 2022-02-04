@@ -85,6 +85,41 @@ module.exports = {
             } catch (err) {
                 throw new Error(err);
             }
+        },
+        // update the country with the given id to match the data that is also given
+        async updateCountry(_, { countryID,
+            country: {
+                name,
+                cases,
+                todayCases,
+                todayDeaths,
+                deaths,
+                population,
+                continent,
+                active,
+                recovered,
+                todayRecovered
+            } }, context) {
+            try {
+                const updatedCountry = await Country.findOneAndUpdate({ _id: countryID }, {
+                    $set: {
+                        name: name,
+                        cases: cases,
+                        todayCases: todayCases,
+                        todayDeaths: todayDeaths,
+                        deaths: deaths,
+                        population: population,
+                        continent: continent,
+                        active: active,
+                        recovered: recovered,
+                        todayRecovered: todayRecovered
+                    }
+                }, { new: true })
+                return updatedCountry
+
+            } catch (err) {
+                throw new Error(err);
+            }
         }
     }
 };
