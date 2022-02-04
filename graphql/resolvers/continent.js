@@ -49,7 +49,7 @@ module.exports = {
                     active,
                     recovered,
                     todayRecovered
-                 }
+                }
             }
         ) {
             /* I didn't add "check if data already exists" because
@@ -82,6 +82,39 @@ module.exports = {
                 } else {
                     throw new AuthenticationError('Action not allowed');
                 }
+            } catch (err) {
+                throw new Error(err);
+            }
+        },
+        // update the continent with the given id to match the data that is also given
+        async updateContinent(_, { continentID,
+            continent: {
+                name,
+                cases,
+                todayCases,
+                todayDeaths,
+                deaths,
+                population,
+                active,
+                recovered,
+                todayRecovered
+            } }, context) {
+            try {
+                const updatedContinent = await Continent.findOneAndUpdate({ _id: continentID }, {
+                    $set: {
+                        name: name,
+                        cases: cases,
+                        todayCases: todayCases,
+                        todayDeaths: todayDeaths,
+                        deaths: deaths,
+                        population: population,
+                        active: active,
+                        recovered: recovered,
+                        todayRecovered: todayRecovered
+                    }
+                }, { new: true })
+                return updatedContinent
+
             } catch (err) {
                 throw new Error(err);
             }

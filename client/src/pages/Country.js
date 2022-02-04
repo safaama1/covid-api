@@ -275,7 +275,7 @@ function Country(props) {
             </Row>
             {loadingCountry ? (
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <CircularProgress style={{color:'#21ABAB'}} />
+                    <CircularProgress style={{ color: '#21ABAB' }} />
                 </div>
             ) : ''}
             {/* if the country has been found and there is no error, then show the info about this country  */}
@@ -441,7 +441,18 @@ function Country(props) {
                         <Row>
                             <Col className='mt-5 mb-5' xs={12} md={6}>
                                 <div>
-                                    {data ? (<Line data={data} height={"300rem"}
+                                    {data ? (<Line data={data} options={{
+                                        plugins: {
+                                            title: {
+                                                display: true,
+                                                text: 'Total Cases Chart',
+                                                font: {
+                                                    size: 33,
+                                                    family: 'Quicksand'
+                                                }
+                                            }
+                                        }
+                                    }} height={"300rem"}
                                     />) : ''}
                                 </div>
                             </Col>
@@ -455,7 +466,7 @@ function Country(props) {
                                                 data: [currCountry.active, currCountry.recovered, currCountry.deaths],
                                                 backgroundColor: [
                                                     'rgb(255, 205, 86)',
-                                                    'rgb(54, 162, 235)',
+                                                    '#21ABAB',
                                                     'rgb(255, 99, 132)'
                                                 ],
                                                 hoverOffset: 4
@@ -465,7 +476,19 @@ function Country(props) {
                                         width={500}
                                         height={500
                                         }
-                                        options={{ maintainAspectRatio: false }} />
+                                        options={{
+                                            maintainAspectRatio: false
+                                            , plugins: {
+                                                title: {
+                                                    display: true,
+                                                    text: 'Recovery Chart',
+                                                    font: {
+                                                        size: 33,
+                                                        family: 'Quicksand'
+                                                    }
+                                                }
+                                            }
+                                        }} />
                                 </div>
                             </Col>
                         </Row>
