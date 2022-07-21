@@ -7,7 +7,7 @@ import {
 } from "react-simple-maps";
 
 const geoUrl =
-    "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
+    "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
 
 const rounded = num => {
     if (num > 1000000000) {
@@ -32,8 +32,7 @@ const MapChart = ({ setTooltipContent }) => {
                                     key={geo.rsmKey}
                                     geography={geo}
                                     onMouseEnter={() => {
-                                        const { NAME, POP_EST } = geo.properties;
-                                        setTooltipContent(`${NAME} — ${rounded(POP_EST)}`);
+                                        setTooltipContent(`${geo.properties.name}`);
                                     }}
                                     onMouseLeave={() => {
                                         setTooltipContent("");
